@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "elterm"
+  },
+  "apps": [
+    {
+      "root": "renderer",
+      "outDir": "dist",
+      "assets": [
+        "assets",
+        "favicon.ico"
+      ],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "tsconfig": "tsconfig.app.json",
+      "prefix": "elterm",
+      "styles": [
+        "../node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
+        "../node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-solid.css",
+        "../node_modules/@fortawesome/fontawesome-free-webfonts/css/fontawesome.css",
+        "../node_modules/ellib/lib/assets/colors.css",
+        "../node_modules/ellib/lib/assets/theme.css",
+        "theme.scss"
+      ],
+      "scripts": [
+        "../node_modules/hammerjs/hammer.min.js",
+        "../node_modules/marked/marked.min.js",
+        "../node_modules/numeral/min/numeral.min.js"
+      ],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    }
+  ],
+  "defaults": {
+    "styleExt": "scss",
+    "component": {}
+  }
+}
