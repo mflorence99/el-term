@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MenuState, MenuStateModel } from '../../state/menu';
+import { LayoutState, LayoutStateModel } from '../../state/layout';
 
 import { Observable } from 'rxjs/Observable';
 import { Select } from '@ngxs/store';
@@ -17,6 +17,6 @@ import { Select } from '@ngxs/store';
 
 export class RootCtrlComponent {
 
-  @Select(MenuState) menu$: Observable<MenuStateModel>;
+  @Select(LayoutState) layout$: Observable<LayoutStateModel>;
 
 }

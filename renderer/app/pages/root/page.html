@@ -1,10 +1,61 @@
-<main>
+<elterm-splittable
+  [layout]="ctrl.layout$ | async"
+  [menu]="contextMenu"
+  [swapWith]="swapWith">
+</elterm-splittable>
 
-</main>
+<context-menu>
 
-<elterm-menu
-  [menu]="ctrl.menu$ | async">
-</elterm-menu>
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'swapWith')"
+    [enabled]="isCloseEnabled.bind(this)">
+    <div>Swap with...</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    divider="true">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'vertical-')">
+    <div>Split Up</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'vertical+')">
+    <div>Split Down</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'horizontal-')">
+    <div>Split Left</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'horizontal+')">
+    <div>Split Right</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    divider="true">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'close')"
+    [enabled]="isCloseEnabled.bind(this)">
+    <div>Close Pane</div>
+    <div class="accelerator">Ctrl+W</div>
+  </ng-template>
+
+</context-menu>
 
 <elterm-root-ctrl
   #ctrl>

@@ -1,0 +1,45 @@
+<split
+  (dragProgress)=onSplitSizeChange($event)
+  [direction]="layout.direction"
+  [useTransition]="true"
+  gutterColor="#424242"
+  gutterSize="3">
+
+  <ng-template
+    ngFor
+    let-split
+    [ngForOf]="layout.splits"
+    let-ix="index">
+
+    <split-area
+      [order]="ix"
+      [size]="split.size">
+
+      <ng-container
+        *ngIf="!split.splits; else splittable">
+
+        <elterm-pane
+          [contextMenu]="menu"
+          [contextMenuSubject]="{id: layout.id, ix: ix}"
+          [sessionID]="split.id"
+          [swapWith]="swapWith">
+          {{ split.id }}
+        </elterm-pane>
+
+      </ng-container>
+
+      <ng-template #splittable>
+
+        <elterm-splittable
+          [layout]="split"
+          [menu]="contextMenu"
+          [swapWith]="swapWith">
+        </elterm-splittable>
+
+      </ng-template>
+
+    </split-area>
+
+  </ng-template>
+
+</split>

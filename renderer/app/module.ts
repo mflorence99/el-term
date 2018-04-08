@@ -32,14 +32,16 @@ const SERVICES = [ ];
 
   imports: [
     ...MODULES,
-    ContextMenuModule.forRoot(),
+    ContextMenuModule.forRoot({
+      autoFocus: true
+    }),
     NgxsModule.forRoot(states),
     NgxsLoggerPluginModule.forRoot({
       collapsed: true,
       logger: console
     }),
     NgxsStoragePluginModule.forRoot({
-      key: ['xxx'],
+      key: ['layout'],
       storage: StorageOption.LocalStorage
     })
   ],

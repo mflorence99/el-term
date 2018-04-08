@@ -1,9 +1,9 @@
-import { MenuState, MenuStateModel } from './menu';
+import { LayoutState, LayoutStateModel } from './layout';
 
 export interface AppState {
-  menu: MenuStateModel;
+  layout: LayoutStateModel;
 }
 
 export const states = [
-  MenuState
+  LayoutState
 ];

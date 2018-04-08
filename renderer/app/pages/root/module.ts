@@ -1,5 +1,5 @@
 import { BarrelModule } from '../../barrel';
-import { MenuComponent } from './menu';
+import { ComponentsModule } from '../../components/module';
 import { NgModule } from '@angular/core';
 import { RootCtrlComponent } from './ctrl';
 import { RootPageComponent } from './page';
@@ -9,13 +9,13 @@ import { RootPageComponent } from './page';
  */
 
 const COMPONENTS = [
-  MenuComponent,
   RootCtrlComponent,
   RootPageComponent
 ];
 
 const MODULES = [
-  BarrelModule
+  BarrelModule,
+  ComponentsModule
 ];
 
 @NgModule({

@@ -1,0 +1,13 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-size: 48px;
+  height: 100%;
+  justify-content: center;
+
+  &.swapping {
+    background-color: var(--accent-color);
+  }
+
+}
