@@ -13,6 +13,14 @@ export class MakeSplit {
     {id: string, ix: number, direction: 'horizontal' | 'vertical', before: boolean}) { }
 }
 
+export class NewLayout {
+  constructor(public readonly payload: string) { }
+}
+
+export class RemoveLayout {
+  constructor(public readonly payload: string) { }
+}
+
 export class SwapWith {
   constructor(public readonly payload: {id: string, with: string}) { }
 }
@@ -21,38 +29,61 @@ export class UpdateSplitSizes {
   constructor(public readonly payload: {id: string, sizes: number[]}) { }
 }
 
-export interface LayoutStateModel {
+export interface Layout {
   direction?: 'horizontal' | 'vertical';
   id: string;
   root?: boolean;
   size: number;
-  splits?: LayoutStateModel[];
+  splits?: Layout[];
+}
+
+export interface LayoutStateModel {
+  [s: string]: Layout;
 }
 
 @State<LayoutStateModel>({
   name: 'layout',
   defaults: {
-    direction: 'vertical',
-    id: UUID.UUID(),
-    root: true,
-    size: 100,
-    splits: [
-      {
-        id: UUID.UUID(),
-        size: 100
-      }
-    ]
+    // NOTE: this is the well-known ID of the "permanent" tab
+    '0': LayoutState.defaultLayout()
   }
 }) export class LayoutState {
 
+  /** Create the default layout */
+  private static defaultLayout(): Layout {
+    return {
+      direction: 'vertical',
+      id: UUID.UUID(),
+      root: true,
+      size: 100,
+      splits: [
+        {
+          id: UUID.UUID(),
+          size: 100
+        }
+      ]
+    };
+  }
+
   /** Deep find a layout by its ID */
   private static findSplitByID(model: LayoutStateModel,
-                               id: string): LayoutStateModel {
-    if (model.id === id)
-      return model;
-    if (model.splits && model.splits.length) {
-      for (const inner of model.splits) {
-        const split = this.findSplitByID(inner, id);
+                               id: string): Layout {
+    for (const key of Object.keys(model)) {
+      const layout = this.findSplitByIDImpl(model[key], id);
+      if (layout)
+        return layout;
+    }
+    return null;
+  }
+
+  /** Deep find a layout by its ID */
+  private static findSplitByIDImpl(layout: Layout,
+                                   id: string): Layout {
+    if (layout.id === id)
+      return layout;
+    if (layout.splits && layout.splits.length) {
+      for (const inner of layout.splits) {
+        const split = this.findSplitByIDImpl(inner, id);
         if (split)
           return split;
       }
@@ -116,6 +147,22 @@ export interface LayoutStateModel {
         }
       }
     }
+    setState({...updated});
+  }
+
+  @Action(NewLayout)
+  newLayout({ getState, setState }: StateContext<LayoutStateModel>,
+            { payload }: NewLayout) {
+    const updated = getState();
+    updated[payload] = LayoutState.defaultLayout();
+    setState({...updated});
+  }
+
+  @Action(RemoveLayout)
+  removeLayout({ getState, setState }: StateContext<LayoutStateModel>,
+            { payload }: RemoveLayout) {
+    const updated = getState();
+    delete updated[payload];
     setState({...updated});
   }
 

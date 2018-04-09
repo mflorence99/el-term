@@ -25,7 +25,7 @@ export class RootPageComponent {
 
   @ViewChild('editorDrawer') editor: DrawerPanelComponent;
 
-  currentTab = { } as Tab;
+  editTab = { } as Tab;
   swapWith: string;
 
   /** Is the close menu enabled? */
@@ -77,7 +77,7 @@ export class RootPageComponent {
   }
 
   onEditTab(tab: Tab) {
-    this.currentTab = tab;
+    this.editTab = tab;
     this.editor.open();
   }
 

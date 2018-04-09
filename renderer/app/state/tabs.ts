@@ -1,4 +1,5 @@
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, State, StateContext, Store } from '@ngxs/store';
+import { NewLayout, RemoveLayout } from './layout';
 
 import { UUID } from 'angular2-uuid';
 
@@ -60,6 +61,9 @@ export interface TabsStateModel {
     return model.tabs.findIndex(tab => tab.id === id);
   }
 
+  /** ctor */
+  constructor(private store: Store) { }
+
   @Action(MoveTab)
   moveTab({ getState, setState }: StateContext<TabsStateModel>,
           { payload }: MoveTab) {
@@ -74,7 +78,9 @@ export interface TabsStateModel {
   newTab({ getState, setState }: StateContext<TabsStateModel>,
          { payload }: NewTab) {
     const updated = getState();
-    updated.tabs.push(new Tab('More Sessions'));
+    const tab = new Tab('More Sessions');
+    updated.tabs.push(tab);
+    this.store.dispatch(new NewLayout(tab.id));
     setState({...updated});
   }
 
@@ -84,6 +90,7 @@ export interface TabsStateModel {
     const updated = getState();
     const ix = TabsState.findTabIndexByID(updated, payload.id);
     updated.tabs.splice(ix, 1);
+    this.store.dispatch(new RemoveLayout(payload.id));
     setState({...updated});
   }
 
