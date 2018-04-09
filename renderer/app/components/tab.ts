@@ -46,7 +46,7 @@ export class TabComponent extends LifecycleComponent {
 
   onRemove(areYouSure: boolean) {
     if (areYouSure) {
-      this.store.dispatch(new RemoveTab(this.tab.id));
+      this.store.dispatch(new RemoveTab(this.tab));
       this.onCancel();
     }
     else this.areYouSure = true;

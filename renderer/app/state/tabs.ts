@@ -13,7 +13,11 @@ export class NewTab {
 }
 
 export class RemoveTab {
-  constructor(public readonly payload: string) { }
+  constructor(public readonly payload: Tab) { }
+}
+
+export class SelectTab {
+  constructor(public readonly payload: Tab) { }
 }
 
 export class UpdateTab {
@@ -31,7 +35,8 @@ export class Tab {
               public icon = 'fab fa-linux',
               public color = 'var(--mat-grey-100)',
               public permanent = false,
-              public id = UUID.UUID()) { }
+              public id = UUID.UUID(),
+              public selected = false) { }
 
 }
 
@@ -44,7 +49,7 @@ export interface TabsStateModel {
   defaults: {
     tabs: [
       // NOTE: the base "permanent" tab has a well-known ID b/c we use in in layout
-      new Tab('My Sessions', 'fab fa-linux', 'var(--mat-grey-100)', true, '0')
+      new Tab('My Sessions', 'fab fa-linux', 'var(--mat-grey-100)', true, '0', true)
     ]
   }
 }) export class TabsState {
@@ -77,8 +82,16 @@ export interface TabsStateModel {
   removeTab({ getState, setState }: StateContext<TabsStateModel>,
             { payload }: RemoveTab) {
     const updated = getState();
-    const ix = TabsState.findTabIndexByID(updated, payload);
+    const ix = TabsState.findTabIndexByID(updated, payload.id);
     updated.tabs.splice(ix, 1);
+    setState({...updated});
+  }
+
+  @Action(SelectTab)
+  selectTab({ getState, setState }: StateContext<TabsStateModel>,
+            { payload }: SelectTab) {
+    const updated = getState();
+    updated.tabs.forEach(tab => tab.selected = (tab.id === payload.id));
     setState({...updated});
   }
 

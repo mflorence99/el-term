@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { LayoutStateModel } from '../state/layout';
 import { Store } from '@ngxs/store';
+import { Tab } from '../state/tabs';
 import { UpdateSplitSizes } from '../state/layout';
 import { debounce } from 'ellib/lib/utils';
 
@@ -22,6 +23,7 @@ export class SplittableComponent {
   @Input() layout: LayoutStateModel;
   @Input() menu: ContextMenuComponent;
   @Input() swapWith: string;
+  @Input() tab: Tab;
 
   private updateSplitSizes: Function;
 

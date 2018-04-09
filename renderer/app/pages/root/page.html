@@ -2,13 +2,15 @@
 
   <elterm-tabs
     (editTab)="onEditTab($event)"
-    [tabs]="ctrl.tabs$ | async">
+    [tabs]="ctrl.tabs$ | async"
+    [tabIndex]="ctrl.tabIndex$ | async">
   </elterm-tabs>
 
   <elterm-splittable
     [layout]="ctrl.layout$ | async"
     [menu]="contextMenu"
-    [swapWith]="swapWith">
+    [swapWith]="swapWith"
+    [tab]="ctrl.tab$ | async">
   </elterm-splittable>
 
   <lib-drawer-panel

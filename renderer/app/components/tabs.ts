@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MoveTab, NewTab, Tab, TabsStateModel } from '../state/tabs';
 
+import { SelectTab } from '../state/tabs';
 import { Store } from '@ngxs/store';
 
 /**
@@ -17,6 +18,7 @@ import { Store } from '@ngxs/store';
 export class TabsComponent {
 
   @Input() tabs: TabsStateModel;
+  @Input() tabIndex: number;
 
   @Output() editTab = new EventEmitter<Tab>();
 
@@ -38,6 +40,10 @@ export class TabsComponent {
 
   onNewTab() {
     this.store.dispatch(new NewTab());
+  }
+
+  onTabSelect(ix: number) {
+    this.store.dispatch(new SelectTab(this.tabs.tabs[ix]));
   }
 
 }

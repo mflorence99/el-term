@@ -1,4 +1,6 @@
-<mat-tab-group>
+<mat-tab-group
+  (selectedIndexChange)="onTabSelect($event)"
+  [selectedIndex]="tabIndex">
 
   <ng-container
     *ngFor="let tab of tabs.tabs; let ix = index">
