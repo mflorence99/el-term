@@ -2,6 +2,8 @@ import { BarrelModule } from '../barrel';
 import { NgModule } from '@angular/core';
 import { PaneComponent } from './pane';
 import { SplittableComponent } from './splittable';
+import { TabComponent } from './tab';
+import { TabsComponent } from './tabs';
 
 /**
  * All our components
@@ -9,7 +11,9 @@ import { SplittableComponent } from './splittable';
 
 const COMPONENTS = [
   PaneComponent,
-  SplittableComponent
+  SplittableComponent,
+  TabComponent,
+  TabsComponent
 ];
 
 @NgModule({

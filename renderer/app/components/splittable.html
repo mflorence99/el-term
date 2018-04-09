@@ -23,7 +23,7 @@
           [contextMenuSubject]="{id: layout.id, ix: ix}"
           [sessionID]="split.id"
           [swapWith]="swapWith">
-          {{ split.id }}
+          {{ split.id.substring(0, 2) }}
         </elterm-pane>
 
       </ng-container>

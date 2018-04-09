@@ -29,6 +29,8 @@
     "@ngxs/storage-plugin": "^2.0.0",
     "@ngxs/store": "^2.0.0",
     "angular-split": "^1.0.0-rc.3",
+    "angular2-uuid": "^1.1.1",
+    "angular4-drag-drop": "^1.1.2",
     "core-js": "^2.4.1",
     "ellib": "latest",
     "hammerjs": "^2.0.8",

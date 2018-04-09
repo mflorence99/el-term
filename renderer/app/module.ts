@@ -41,7 +41,7 @@ const SERVICES = [ ];
       logger: console
     }),
     NgxsStoragePluginModule.forRoot({
-      key: ['layout'],
+      key: ['layout', 'tabs'],
       storage: StorageOption.LocalStorage
     })
   ],

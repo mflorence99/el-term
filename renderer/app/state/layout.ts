@@ -1,6 +1,6 @@
 import { Action, State, StateContext } from '@ngxs/store';
 
-import { toHex } from 'ellib/lib/utils';
+import { UUID } from 'angular2-uuid';
 
 /** NOTE: actions must come first because of AST */
 
@@ -33,12 +33,12 @@ export interface LayoutStateModel {
   name: 'layout',
   defaults: {
     direction: 'vertical',
-    id: LayoutState.makeID(),
+    id: UUID.UUID(),
     root: true,
     size: 100,
     splits: [
       {
-        id: LayoutState.makeID(),
+        id: UUID.UUID(),
         size: 100
       }
     ]
@@ -46,8 +46,8 @@ export interface LayoutStateModel {
 }) export class LayoutState {
 
   /** Deep find a layout by its ID */
-  static findSplitByID(model: LayoutStateModel,
-                       id: string): LayoutStateModel {
+  private static findSplitByID(model: LayoutStateModel,
+                               id: string): LayoutStateModel {
     if (model.id === id)
       return model;
     if (model.splits && model.splits.length) {
@@ -58,11 +58,6 @@ export interface LayoutStateModel {
       }
     }
     return null;
-  }
-
-  /** Make an unique ID */
-  static makeID(): string {
-    return toHex(Math.trunc(Math.random() * 100000000), 2);
   }
 
   @Action(CloseSplit)
@@ -99,7 +94,7 @@ export interface LayoutStateModel {
       // we set everyone to the same size, distributed evenly
       if (split.direction === payload.direction) {
         const iy = payload.ix + (payload.before? 0 : 1);
-        split.splits.splice(iy, 0, { id: LayoutState.makeID(), size: 0 });
+        split.splits.splice(iy, 0, { id: UUID.UUID(), size: 0 });
         const size = 100 / split.splits.length;
         split.splits.forEach(split => split.size = size);
       }
@@ -110,14 +105,14 @@ export interface LayoutStateModel {
         const splat = split.splits[payload.ix];
         splat.direction = payload.direction;
         const splatID = splat.id;
-        splat.id = LayoutState.makeID();
+        splat.id = UUID.UUID();
         if (payload.before) {
-          splat.splits = [{ id: LayoutState.makeID(), size: 50 },
+          splat.splits = [{ id: UUID.UUID(), size: 50 },
                           { id: splatID, size: 50 }];
         }
         else {
           splat.splits = [{ id: splatID, size: 50 },
-                          { id: LayoutState.makeID(), size: 50 }];
+                          { id: UUID.UUID(), size: 50 }];
         }
       }
     }

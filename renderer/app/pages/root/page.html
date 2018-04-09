@@ -1,15 +1,34 @@
-<elterm-splittable
-  [layout]="ctrl.layout$ | async"
-  [menu]="contextMenu"
-  [swapWith]="swapWith">
-</elterm-splittable>
+<lib-drawer-container>
+
+  <elterm-tabs
+    (editTab)="onEditTab($event)"
+    [tabs]="ctrl.tabs$ | async">
+  </elterm-tabs>
+
+  <elterm-splittable
+    [layout]="ctrl.layout$ | async"
+    [menu]="contextMenu"
+    [swapWith]="swapWith">
+  </elterm-splittable>
+
+  <lib-drawer-panel
+    #editorDrawer
+    position="top">
+
+    <elterm-tab
+      [tab]="currentTab">
+    </elterm-tab>
+
+  </lib-drawer-panel>
+
+</lib-drawer-container>
 
 <context-menu>
 
   <ng-template
     contextMenuItem
     (execute)="onContextMenu($event, 'swapWith')"
-    [enabled]="isCloseEnabled.bind(this)">
+    [enabled]="isSwapEnabled.bind(this)">
     <div>Swap with...</div>
   </ng-template>
 

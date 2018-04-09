@@ -1,4 +1,15 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+elterm-root-tabs {
+  flex-basis: 48px;
+  flex-grow: 0;
+}
+
+elterm-splittable {
+  flex-basis: auto;
+  flex-grow: 1;
 }

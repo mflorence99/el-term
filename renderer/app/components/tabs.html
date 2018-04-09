@@ -1,0 +1,49 @@
+<mat-tab-group>
+
+  <ng-container
+    *ngFor="let tab of tabs.tabs; let ix = index">
+
+    <mat-tab>
+      <ng-template
+        mat-tab-label>
+
+        <div
+          (dropEvent)="onMoveTab($event, ix)"
+          [dropHighlight]="'drop-target'"
+          dropDirective>
+
+          <div
+            [dragDirective]="tab">
+
+            <i
+              [ngClass]="tab.icon"
+              [ngStyle]="{color: tab.color}"
+              class="fa-lg">
+            </i>
+
+            <span>
+              {{ tab.label }}
+            </span>
+
+            <i
+              (click)="onEditTab($event, tab)"
+              class="fas fa-info editor">
+            </i>
+
+          </div>
+
+        </div>
+
+      </ng-template>
+    </mat-tab>
+
+  </ng-container>
+
+</mat-tab-group>
+
+<button
+  (click)="onNewTab()"
+  matTooltip="Add a new tab"
+  mat-icon-button>
+  <i class="fas fa-plus"></i>
+</button>

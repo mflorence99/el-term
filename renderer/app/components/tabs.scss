@@ -1,0 +1,16 @@
+:host {
+  background-color: var(--mat-grey-800);
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.editor {
+  margin-left: 16px;
+  padding: 8px;
+}
+
+div.drop-target {
+  outline: 1px solid var(--text-color);
+}

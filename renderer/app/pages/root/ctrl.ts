@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LayoutState, LayoutStateModel } from '../../state/layout';
+import { TabsState, TabsStateModel } from '../../state/tabs';
 
 import { Observable } from 'rxjs/Observable';
 import { Select } from '@ngxs/store';
@@ -18,5 +19,6 @@ import { Select } from '@ngxs/store';
 export class RootCtrlComponent {
 
   @Select(LayoutState) layout$: Observable<LayoutStateModel>;
+  @Select(TabsState) tabs$: Observable<TabsStateModel>;
 
 }
