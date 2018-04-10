@@ -1,9 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { CloseSplit, MakeSplit, SetBadge } from '../../state/layout';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
-import { CloseSplit } from '../../state/layout';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { DrawerPanelComponent } from 'ellib/lib/components/drawer-panel';
-import { MakeSplit } from '../../state/layout';
 import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
@@ -23,10 +22,14 @@ export class RootPageComponent {
   @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
   @ViewChild(SplittableComponent) splittable: SplittableComponent;
 
+  @ViewChild('badgeText') badge: ElementRef;
   @ViewChild('editorDrawer') editor: DrawerPanelComponent;
 
   editTab = { } as Tab;
   swapWith: string;
+
+  /** ctor */
+  constructor(private store: Store) { }
 
   /** Is the close menu enabled? */
   isCloseEnabled(item: {id: string, ix: number}): boolean {
@@ -36,12 +39,8 @@ export class RootPageComponent {
 
   /** Is the swap menu enabled? */
   isSwapEnabled(item: {id: string, ix: number}): boolean {
-    return (item.id !== this.splittable.layout.id)
-        || (this.splittable.layout.splits.length > 1);
+    return this.isCloseEnabled(item);
   }
-
-  /** ctor */
-  constructor(private store: Store) { }
 
   // event handlers
 
@@ -52,6 +51,10 @@ export class RootPageComponent {
     const id = event.item.id;
     const ix = event.item.ix;
     switch (command) {
+      case 'badge':
+        const badge = this.badge.nativeElement.value;
+        actions.push(new SetBadge({ id, ix, badge }));
+        break;
       case 'swapWith':
         this.swapWith = `${id}[${ix}]`;
         break;

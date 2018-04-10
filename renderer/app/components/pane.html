@@ -1,1 +1,18 @@
-<ng-content></ng-content>
+<div
+  [ngStyle]="{color: tab.color}"
+  class="background">
+
+  <i
+    [ngClass]="tab.icon"
+    class="fa-lg">
+  </i>
+
+  <div class="badge">
+    {{ badge }}
+  </div>
+
+</div>
+
+<div class="foreground">
+  {{ sessionID.substring(0, 2) }}
+</div>

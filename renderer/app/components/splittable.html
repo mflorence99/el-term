@@ -19,11 +19,12 @@
         *ngIf="!split.splits; else splittable">
 
         <elterm-pane
+          [badge]="split.badge"
           [contextMenu]="menu"
           [contextMenuSubject]="{id: layout.id, ix: ix}"
           [sessionID]="split.id"
-          [swapWith]="swapWith">
-          {{ split.id.substring(0, 2) }}
+          [swapWith]="swapWith"
+          [tab]="tab">
         </elterm-pane>
 
       </ng-container>

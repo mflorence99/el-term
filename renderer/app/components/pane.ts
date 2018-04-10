@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, HostBinding, HostListener, Input } 
 import { RootPageComponent } from '../pages/root/page';
 import { Store } from '@ngxs/store';
 import { SwapWith } from '../state/layout';
+import { Tab } from '../state/tabs';
 
 /**
  * Pane component
@@ -19,8 +20,10 @@ export class PaneComponent {
 
   @HostBinding('class.swapping') isSwapping: boolean;
 
+  @Input() badge: string;
   @Input() sessionID: string;
   @Input() swapWith: string;
+  @Input() tab: Tab;
 
   /** ctor */
   constructor(private root: RootPageComponent,

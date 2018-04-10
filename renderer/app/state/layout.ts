@@ -21,6 +21,10 @@ export class RemoveLayout {
   constructor(public readonly payload: string) { }
 }
 
+export class SetBadge {
+  constructor(public readonly payload: {id: string, ix: number, badge: string}) { }
+}
+
 export class SwapWith {
   constructor(public readonly payload: {id: string, with: string}) { }
 }
@@ -30,6 +34,7 @@ export class UpdateSplitSizes {
 }
 
 export interface Layout {
+  badge?: string;
   direction?: 'horizontal' | 'vertical';
   id: string;
   root?: boolean;
@@ -163,6 +168,16 @@ export interface LayoutStateModel {
             { payload }: RemoveLayout) {
     const updated = getState();
     delete updated[payload];
+    setState({...updated});
+  }
+
+  @Action(SetBadge)
+  setBadge({ getState, setState }: StateContext<LayoutStateModel>,
+          { payload }: SetBadge) {
+    const updated = getState();
+    const split = LayoutState.findSplitByID(updated, payload.id);
+    if (split)
+      split.splits[payload.ix].badge = payload.badge;
     setState({...updated});
   }
 

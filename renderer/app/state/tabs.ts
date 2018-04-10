@@ -17,6 +17,10 @@ export class RemoveTab {
   constructor(public readonly payload: Tab) { }
 }
 
+export class SelectPermanentTab {
+  constructor(public readonly payload?: any) { }
+}
+
 export class SelectTab {
   constructor(public readonly payload: Tab) { }
 }
@@ -91,6 +95,14 @@ export interface TabsStateModel {
     const ix = TabsState.findTabIndexByID(updated, payload.id);
     updated.tabs.splice(ix, 1);
     this.store.dispatch(new RemoveLayout(payload.id));
+    setState({...updated});
+  }
+
+  @Action(SelectPermanentTab)
+  selectPermanentTab({ getState, setState }: StateContext<TabsStateModel>,
+                     { payload }: SelectPermanentTab) {
+    const updated = getState();
+    updated.tabs.forEach(tab => tab.selected = tab.permanent);
     setState({...updated});
   }
 

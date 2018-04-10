@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RemoveTab, Tab, UpdateTab } from '../state/tabs';
+import { RemoveTab, SelectPermanentTab, Tab, UpdateTab } from '../state/tabs';
 
 import { DrawerPanelComponent } from 'ellib/lib/components/drawer-panel';
 import { LifecycleComponent } from 'ellib/lib/components/lifecycle';
 import { OnChange } from 'ellib/lib/decorators/onchange';
 import { Store } from '@ngxs/store';
+import { nextTick } from 'ellib/lib/utils';
 
 /**
  * Tab component
@@ -46,7 +47,11 @@ export class TabComponent extends LifecycleComponent {
 
   onRemove(areYouSure: boolean) {
     if (areYouSure) {
-      this.store.dispatch(new RemoveTab(this.tab));
+      // NOTE: we need to make sure a tab is selected after we delete
+      // one that itself may have been selected -- we also delay removal
+      // so this component can clean up first
+      this.store.dispatch(new SelectPermanentTab());
+      nextTick(() => this.store.dispatch(new RemoveTab(this.tab)));
       this.onCancel();
     }
     else this.areYouSure = true;

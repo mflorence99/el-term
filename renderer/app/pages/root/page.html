@@ -29,14 +29,30 @@
 
   <ng-template
     contextMenuItem
-    (execute)="onContextMenu($event, 'swapWith')"
-    [enabled]="isSwapEnabled.bind(this)">
-    <div>Swap with...</div>
+    (execute)="onContextMenu($event, 'badge')">
+    <div>Set session badge...</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    passive="true">
+    <input
+      matInput
+      placeholder="badge text"
+      type="text"
+      #badgeText>
   </ng-template>
 
   <ng-template
     contextMenuItem
     divider="true">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'swapWith')"
+    [enabled]="isSwapEnabled.bind(this)">
+    <div>Swap with...</div>
   </ng-template>
 
   <ng-template
@@ -61,11 +77,6 @@
     contextMenuItem
     (execute)="onContextMenu($event, 'horizontal+')">
     <div>Split Right</div>
-  </ng-template>
-
-  <ng-template
-    contextMenuItem
-    divider="true">
   </ng-template>
 
   <ng-template

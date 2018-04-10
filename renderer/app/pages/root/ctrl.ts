@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Layout, LayoutState, LayoutStateModel } from '../../state/layout';
 import { Tab, TabsState, TabsStateModel } from '../../state/tabs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { Observable } from 'rxjs/Observable';
 import { Select } from '@ngxs/store';
@@ -33,8 +33,7 @@ export class RootCtrlComponent {
   layout$: Observable<Layout> = this.tab$.pipe(
     switchMap((tab: Tab) => {
       return this.layouts$.pipe(
-        map((model: LayoutStateModel) => model[tab.id]),
-        tap((layout: Layout) => console.log('XXX', tab, layout))
+        map((model: LayoutStateModel) => model[tab.id])
       );
     })
   );
