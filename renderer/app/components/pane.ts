@@ -10,7 +10,7 @@ import { Tab } from '../state/tabs';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   selector: 'elterm-pane',
   templateUrl: 'pane.html',
   styleUrls: ['pane.scss']

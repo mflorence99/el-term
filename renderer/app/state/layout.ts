@@ -194,7 +194,10 @@ export interface LayoutStateModel {
     const ix = Number(compound[1]);
     const p = LayoutState.findSplitByID(updated, payload.id);
     const q = LayoutState.findSplitByID(updated, withID).splits[ix];
+    const badge = p.badge;
+    p.badge = q.badge;
     p.id = q.id;
+    q.badge = badge;
     q.id = payload.id;
     setState({...updated});
   }
