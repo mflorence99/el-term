@@ -112,6 +112,7 @@ export interface LayoutStateModel {
       // but if only one split left, collapse the splits
       // NOTE: the root level can't be deleted
       else {
+        split.badge = split.splits[0].badge;
         split.id = split.splits[0].id;
         delete split.direction;
         delete split.splits;
@@ -140,14 +141,16 @@ export interface LayoutStateModel {
       else {
         const splat = split.splits[payload.ix];
         splat.direction = payload.direction;
+        const splatBadge = splat.badge;
+        splat.badge = '';
         const splatID = splat.id;
         splat.id = UUID.UUID();
         if (payload.before) {
           splat.splits = [{ id: UUID.UUID(), size: 50 },
-                          { id: splatID, size: 50 }];
+                          { id: splatID, badge: splatBadge, size: 50 }];
         }
         else {
-          splat.splits = [{ id: splatID, size: 50 },
+          splat.splits = [{ id: splatID, badge: splatBadge, size: 50 },
                           { id: UUID.UUID(), size: 50 }];
         }
       }
