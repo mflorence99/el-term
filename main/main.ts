@@ -1,3 +1,6 @@
+import * as path from 'path';
+import * as url from 'url';
+
 import { BrowserWindow, app } from 'electron';
 
 /**
@@ -8,16 +11,26 @@ let theWindow: BrowserWindow;
 
 app.on('ready', () => {
   theWindow = new BrowserWindow({
-    width: 832,
+    width: 1600,
     height: 1024,
     resizable: true
   });
-  // TODO: also temporary -- not deploying from dist to get hot reload
-  theWindow.loadURL('http://localhost:4200');
-  theWindow.setMenu(null);
+  // theWindow.loadURL('http://localhost:4200');
+  theWindow.loadURL(url.format({
+    // TODO: temporary -- not deploying from dist to get hot reload
+    hostname: 'localhost',
+    pathname: path.join(),
+    port: 4200,
+    protocol: 'http:',
+    // pathname: path.join(__dirname, 'index.html'),
+    // protocol: 'file:',
+    slashes: true
+  }));
+  // theWindow.setMenu(null);
   theWindow.webContents.openDevTools();
 });
 
 app.on('window-all-closed', () => {
+  theWindow.webContents.send('kill');
   app.quit();
 });

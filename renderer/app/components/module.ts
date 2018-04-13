@@ -1,9 +1,11 @@
 import { BarrelModule } from '../barrel';
 import { NgModule } from '@angular/core';
 import { PaneComponent } from './pane';
+import { PrefsComponent } from './prefs';
 import { SplittableComponent } from './splittable';
 import { TabComponent } from './tab';
 import { TabsComponent } from './tabs';
+import { TerminalComponent } from './terminal';
 
 /**
  * All our components
@@ -11,9 +13,11 @@ import { TabsComponent } from './tabs';
 
 const COMPONENTS = [
   PaneComponent,
+  PrefsComponent,
   SplittableComponent,
   TabComponent,
-  TabsComponent
+  TabsComponent,
+  TerminalComponent
 ];
 
 @NgModule({

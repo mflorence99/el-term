@@ -2,40 +2,31 @@
   display: block;
   height: 100%;
   position: relative;
-
-  &.swapping {
-    background-color: var(--accent-color);
-  }
-
 }
 
-.background {
-  display: flex;
-  filter: opacity(50%);
-  flex-direction: row;
-  font-size: 24px;
-  justify-content: flex-end;
-  padding: 16px;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 0;
-
-  .badge {
-    margin-left: 16px;
-  }
-
-}
-
-.foreground {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  font-size: 48px;
+elterm-terminal {
   height: 100%;
-  justify-content: center;
   position: absolute;
   top: 0;
   width: 100%;
   z-index: 1;
+}
+
+.overlay {
+  align-items: center;
+  display: grid;
+  filter: opacity(50%);
+  font-size: 32px;
+  grid-gap: 16px;
+  grid-template-columns: auto auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 2;
+
+  &.swapping {
+    color: var(--accent-color) !important;
+    filter: opacity(100%);
+  }
+
 }

@@ -1,6 +1,8 @@
 import { Action, State, StateContext } from '@ngxs/store';
 
+import { TerminalService } from '../services/terminal';
 import { UUID } from 'angular2-uuid';
+import { nextTick } from 'ellib';
 
 /** NOTE: actions must come first because of AST */
 
@@ -21,8 +23,8 @@ export class RemoveLayout {
   constructor(public readonly payload: string) { }
 }
 
-export class SetBadge {
-  constructor(public readonly payload: {id: string, ix: number, badge: string}) { }
+export class SetPrefs {
+  constructor(public readonly payload: {id: string, prefs: LayoutPrefs}) { }
 }
 
 export class SwapWith {
@@ -34,12 +36,16 @@ export class UpdateSplitSizes {
 }
 
 export interface Layout {
-  badge?: string;
   direction?: 'horizontal' | 'vertical';
   id: string;
+  prefs?: LayoutPrefs;
   root?: boolean;
   size: number;
   splits?: Layout[];
+}
+
+export interface LayoutPrefs {
+  badge?: string;
 }
 
 export interface LayoutStateModel {
@@ -55,10 +61,11 @@ export interface LayoutStateModel {
 }) export class LayoutState {
 
   /** Create the default layout */
-  private static defaultLayout(): Layout {
+  static defaultLayout(): Layout {
     return {
       direction: 'vertical',
       id: UUID.UUID(),
+      prefs: { } as LayoutPrefs,
       root: true,
       size: 100,
       splits: [
@@ -71,8 +78,8 @@ export interface LayoutStateModel {
   }
 
   /** Deep find a layout by its ID */
-  private static findSplitByID(model: LayoutStateModel,
-                               id: string): Layout {
+  static findSplitByID(model: LayoutStateModel,
+                       id: string): Layout {
     for (const key of Object.keys(model)) {
       const layout = this.findSplitByIDImpl(model[key], id);
       if (layout)
@@ -82,8 +89,8 @@ export interface LayoutStateModel {
   }
 
   /** Deep find a layout by its ID */
-  private static findSplitByIDImpl(layout: Layout,
-                                   id: string): Layout {
+  static findSplitByIDImpl(layout: Layout,
+                           id: string): Layout {
     if (layout.id === id)
       return layout;
     if (layout.splits && layout.splits.length) {
@@ -96,12 +103,29 @@ export interface LayoutStateModel {
     return null;
   }
 
+  /** Visit each split in a layout */
+  static visitSplits(layout: Layout,
+                     visitor: Function): void {
+    if (layout.splits && layout.splits.length) {
+      for (const inner of layout.splits) {
+        visitor(inner);
+        this.visitSplits(inner, visitor);
+      }
+    }
+  }
+
+  /** ctor */
+  constructor(private termSvc: TerminalService) { }
+
   @Action(CloseSplit)
   closeSplit({ getState, setState }: StateContext<LayoutStateModel>,
              { payload }: CloseSplit) {
     const updated = getState();
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split) {
+      // kill the terminal session we're closing
+      const splat = split.splits[payload.ix];
+      nextTick(() => this.termSvc.kill(splat.id));
       split.splits.splice(payload.ix, 1);
       // if we have more than one split left (or at the root level)
       // we set everyone to the same size, distributed evenly
@@ -112,7 +136,7 @@ export interface LayoutStateModel {
       // but if only one split left, collapse the splits
       // NOTE: the root level can't be deleted
       else {
-        split.badge = split.splits[0].badge;
+        split.prefs = { ...split.splits[0].prefs };
         split.id = split.splits[0].id;
         delete split.direction;
         delete split.splits;
@@ -141,16 +165,16 @@ export interface LayoutStateModel {
       else {
         const splat = split.splits[payload.ix];
         splat.direction = payload.direction;
-        const splatBadge = splat.badge;
-        splat.badge = '';
+        const splatPrefs = { ...splat.prefs };
+        splat.prefs = { };
         const splatID = splat.id;
         splat.id = UUID.UUID();
         if (payload.before) {
           splat.splits = [{ id: UUID.UUID(), size: 50 },
-                          { id: splatID, badge: splatBadge, size: 50 }];
+                          { id: splatID, prefs: splatPrefs, size: 50 }];
         }
         else {
-          splat.splits = [{ id: splatID, badge: splatBadge, size: 50 },
+          splat.splits = [{ id: splatID, prefs: splatPrefs, size: 50 },
                           { id: UUID.UUID(), size: 50 }];
         }
       }
@@ -168,19 +192,24 @@ export interface LayoutStateModel {
 
   @Action(RemoveLayout)
   removeLayout({ getState, setState }: StateContext<LayoutStateModel>,
-            { payload }: RemoveLayout) {
+               { payload }: RemoveLayout) {
     const updated = getState();
+    // kill every terminal session we're deleting
+    const layout = updated[payload];
+    LayoutState.visitSplits(layout, splat => {
+      nextTick(() => this.termSvc.kill(splat.id));
+    });
     delete updated[payload];
     setState({...updated});
   }
 
-  @Action(SetBadge)
-  setBadge({ getState, setState }: StateContext<LayoutStateModel>,
-          { payload }: SetBadge) {
+  @Action(SetPrefs)
+  setPrefs({ getState, setState }: StateContext<LayoutStateModel>,
+           { payload }: SetPrefs) {
     const updated = getState();
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split)
-      split.splits[payload.ix].badge = payload.badge;
+      split.prefs = { ...payload.prefs };
     setState({...updated});
   }
 
@@ -194,11 +223,11 @@ export interface LayoutStateModel {
     const ix = Number(compound[1]);
     const p = LayoutState.findSplitByID(updated, payload.id);
     const q = LayoutState.findSplitByID(updated, withID).splits[ix];
-    const badge = p.badge;
-    p.badge = q.badge;
     p.id = q.id;
-    q.badge = badge;
     q.id = payload.id;
+    const prefs = { ...p.prefs };
+    p.prefs = { ...q.prefs };
+    q.prefs = prefs;
     setState({...updated});
   }
 

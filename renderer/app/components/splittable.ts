@@ -5,7 +5,7 @@ import { Layout } from '../state/layout';
 import { Store } from '@ngxs/store';
 import { Tab } from '../state/tabs';
 import { UpdateSplitSizes } from '../state/layout';
-import { debounce } from 'ellib/lib/utils';
+import { debounce } from 'ellib';
 
 /**
  * Splittable component

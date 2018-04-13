@@ -1,0 +1,49 @@
+<form
+  [formGroup]="prefsForm"
+  novalidate>
+
+  <mat-form-field>
+    <input
+      formControlName="badge"
+      matInput
+      placeholder="Optional badge text"
+      type="text">
+    <button
+      (click)="onClearBadge()"
+      aria-label="Clear"
+      mat-button
+      mat-icon-button
+      matSuffix>
+      <i class="fas fa-times"></i>
+    </button>
+  </mat-form-field>
+
+  <div class="buttons">
+
+    <div class="info">
+      <i class="fas fa-info-circle"></i>
+      Preferences persist until the pane is closed, or the tab that holds it is removed.
+    </div>
+
+    <div class="okAndCancel">
+
+      <a
+        (click)="onCancel()"
+        mat-button>
+        Cancel
+      </a>
+
+      <button
+        (click)="onSubmit()"
+        [disabled]="prefsForm.invalid"
+        color="primary"
+        mat-raised-button
+        type="submit">
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</form>

@@ -1,18 +1,20 @@
 <div
+  [ngClass]="{swapping: swapping}"
   [ngStyle]="{color: tab.color}"
-  class="background">
+  class="overlay">
 
   <i
     [ngClass]="tab.icon"
-    class="fa-lg">
+    class="fa-lg icon">
   </i>
 
-  <div class="badge">
-    {{ badge }}
+  <div *ngIf="prefs?.badge">
+    {{ prefs.badge }}
   </div>
 
 </div>
 
-<div class="foreground console">
-  {{ sessionID.substring(0, 2) }}
-</div>
+<elterm-terminal
+  (libResized)="onResized($event)"
+  [sessionID]="sessionID">
+</elterm-terminal>

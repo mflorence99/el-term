@@ -14,12 +14,23 @@
   </elterm-splittable>
 
   <lib-drawer-panel
-    #editorDrawer
+    #tabDrawer
     position="top">
 
     <elterm-tab
       [tab]="editTab">
     </elterm-tab>
+
+  </lib-drawer-panel>
+
+  <lib-drawer-panel
+    #prefsDrawer
+    position="bottom">
+
+    <elterm-prefs
+      [prefs]="editPrefs"
+      [prefsID]="editPrefsID">
+    </elterm-prefs>
 
   </lib-drawer-panel>
 
@@ -29,18 +40,8 @@
 
   <ng-template
     contextMenuItem
-    (execute)="onContextMenu($event, 'badge')">
-    <div>Set session badge...</div>
-  </ng-template>
-
-  <ng-template
-    contextMenuItem
-    passive="true">
-    <input
-      matInput
-      placeholder="badge text"
-      type="text"
-      #badgeText>
+    (execute)="onContextMenu($event, 'prefs')">
+    <div>Preferences...</div>
   </ng-template>
 
   <ng-template

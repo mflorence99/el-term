@@ -1,8 +1,8 @@
-import { CloseSplit, MakeSplit, SetBadge } from '../../state/layout';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CloseSplit, LayoutPrefs, LayoutState, MakeSplit } from '../../state/layout';
+import { Component, ViewChild } from '@angular/core';
 
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { DrawerPanelComponent } from 'ellib/lib/components/drawer-panel';
+import { DrawerPanelComponent } from 'ellib';
 import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
@@ -22,9 +22,11 @@ export class RootPageComponent {
   @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
   @ViewChild(SplittableComponent) splittable: SplittableComponent;
 
-  @ViewChild('badgeText') badge: ElementRef;
-  @ViewChild('editorDrawer') editor: DrawerPanelComponent;
+  @ViewChild('prefsDrawer') prefsDrawer: DrawerPanelComponent;
+  @ViewChild('tabDrawer') tabDrawer: DrawerPanelComponent;
 
+  editPrefs = { } as LayoutPrefs;
+  editPrefsID: string;
   editTab = { } as Tab;
   swapWith: string;
 
@@ -51,9 +53,11 @@ export class RootPageComponent {
     const id = event.item.id;
     const ix = event.item.ix;
     switch (command) {
-      case 'badge':
-        const badge = this.badge.nativeElement.value;
-        actions.push(new SetBadge({ id, ix, badge }));
+      case 'prefs':
+      const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
+        this.editPrefs = layout.splits[ix].prefs;
+        this.editPrefsID = layout.splits[ix].id;
+        this.prefsDrawer.open();
         break;
       case 'swapWith':
         this.swapWith = `${id}[${ix}]`;
@@ -81,7 +85,7 @@ export class RootPageComponent {
 
   onEditTab(tab: Tab) {
     this.editTab = tab;
-    this.editor.open();
+    this.tabDrawer.open();
   }
 
 }

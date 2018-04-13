@@ -19,9 +19,9 @@
         *ngIf="!split.splits; else splittable">
 
         <elterm-pane
-          [badge]="split.badge"
           [contextMenu]="menu"
           [contextMenuSubject]="{id: layout.id, ix: ix}"
+          [prefs]="split.prefs"
           [sessionID]="split.id"
           [swapWith]="swapWith"
           [tab]="tab">
