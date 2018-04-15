@@ -30,10 +30,6 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.termSvc.disconnect(this.sessionID);
-    // clean out the container
-    const container = this.xterm.nativeElement;
-    while (container.children.length)
-      container.removeChild(container.children[0]);
   }
 
 }

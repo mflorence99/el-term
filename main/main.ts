@@ -31,6 +31,5 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => {
-  theWindow.webContents.send('kill');
   app.quit();
 });

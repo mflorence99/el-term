@@ -1,38 +1,38 @@
+import { Injectable, OnDestroy } from '@angular/core';
+
 import { ElectronService } from 'ngx-electron';
-import { Injectable } from '@angular/core';
 import { Terminal } from 'xterm';
+import { nextTick } from 'ellib';
 
 const initialCols = 80;
 const initialRows = 24;
 const padding = 16;
-
-declare var ELTerm_nodePtyFactory: Function;
 
 /**
  * Encapsulates xterm <==> node-pty communication
  */
 
 @Injectable()
-export class TerminalService {
+export class TerminalService implements OnDestroy {
 
-  private static ptys: { [sessionID: string]: any } = { };
-  private static terms: { [sessionID: string]: Terminal } = { };
+  private static sessions: { [sessionID: string]: Session } = { };
+
+  private nodePty: { spawn: Function };
+  private os: { platform: Function };
 
   /** ctor */
   constructor(private electron: ElectronService) {
-    this.electron.ipcRenderer.on('kill', () => {
-      const ptys = TerminalService.ptys;
-      Object.keys(ptys).forEach(sessionID => ptys[sessionID].kill());
-    });
+    this.os = this.electron.remote.require('os');
+    this.nodePty = this.electron.remote.require('node-pty');
   }
 
   /** Connect to a session */
   connect(sessionID: string,
           element: HTMLElement): Terminal {
-    const terms = TerminalService.terms;
-    let term = terms[sessionID];
-    if (!term) {
-      term = new Terminal({
+    const session = this.get(sessionID);
+    // configure a new Terminal if one doesn't exist already
+    if (!session.term) {
+      session.term = new Terminal({
         // NOTE: I think there's a bug where this object is NOT r/o!
         cols: initialCols,
         rows: initialRows,
@@ -44,61 +44,174 @@ export class TerminalService {
         }
       });
       // connect to DOM
-      term.open(element);
-      term.element.style.padding = `${padding}px`;
-      (<any>term).fit();
-      terms[sessionID] = term;
+      session.term.open(element);
+      session.term.element.style.padding = `${padding}px`;
+      // NOTE: see https://github.com/xtermjs/xterm.js/#importing
+      (<any>session.term).fit();
+      session.element = element;
     }
-    // connect to pty terminal
-    const ptys = TerminalService.ptys;
-    let pty = ptys[sessionID];
-    if (!pty) {
-      pty = ELTerm_nodePtyFactory(initialCols, initialRows);
-      ptys[sessionID] = pty;
+    // otherwise wire up previously disconnected nodes
+    else {
+      const pp = element.parentNode;
+      pp.insertBefore(session.element, element);
+      element.remove();
     }
-    // wire them together
-    term.on('data', data => pty.write(data));
-    pty.on('data', data => term.write(data));
-    return term;
+    // connect to pty
+    if (!session.pty) {
+      const process = this.electron.process;
+      const shell = process.env[this.os.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
+      session.pty = this.nodePty.spawn(shell, [], {
+        cols: initialCols,
+        cwd: process.cwd(),
+        env: process.env,
+        name: 'xterm-256color',
+        rows: initialRows
+      });
+    }
+    // now wire them together
+    if (!session.term2pty) {
+      session.term2pty = data => session.pty.write(data);
+      session.term.on('data', session.term2pty);
+    }
+    if (!session.pty2term) {
+      session.pty2term = data => session.term.write(data);
+      session.pty.addListener('data', session.pty2term);
+    }
+    // force a resize because we changed from the default font
+    nextTick(() => {
+      const p = session.element.parentElement;
+      this.resize(sessionID, p.clientWidth, p.clientHeight);
+    });
+    return session.term;
+  }
+
+  /** Delete a session */
+  delete(sessionID: string): void {
+    delete TerminalService.sessions[sessionID];
   }
 
   /** Disconnect from session */
   disconnect(sessionID: string): void {
-    const terms = TerminalService.terms;
-    if (terms[sessionID]) {
-      terms[sessionID].destroy();
-      delete terms[sessionID];
+    const session = this.get(sessionID);
+    if (session.element) {
+      const pp = session.element.parentNode;
+      pp.removeChild(session.element);
     }
+  }
+
+  /** Get a session */
+  get(sessionID: string): Session {
+    let session = TerminalService.sessions[sessionID];
+    if (!session) {
+      session = { } as Session;
+      TerminalService.sessions[sessionID] = session;
+    }
+    return session;
   }
 
   /** Kill a pty terminal */
   kill(sessionID: string): void {
-    this.disconnect(sessionID);
-    const ptys = TerminalService.ptys;
-    if (ptys[sessionID]) {
-      ptys[sessionID].kill();
-      delete ptys[sessionID];
+    const session = this.get(sessionID);
+    if (session.pty) {
+      session.pty.removeListener('data', session.pty2term);
+      session.pty.kill();
     }
+    if (session.term) {
+      session.term.off('data', session.term2pty);
+      session.term.destroy();
+    }
+    this.delete(sessionID);
   }
 
   /** Resize session window */
   resize(sessionID: string,
          width: number,
          height: number): void {
-    const term: any = TerminalService.terms[sessionID];
-    if (term && term.renderer && term.viewport) {
+    const session = this.get(sessionID);
+    if (session.pty
+     && session.term
+     && (<any>session.term).renderer
+     && (<any>session.term).viewport) {
       // TODO: don't really know how to make this calculation work,
       // especially for height/rows -- pty seems to have some row calculation
       // hidden factor
-      // NOTE: we suppress the scrollbar visually in theme.scss
-      const cols = Math.max(Math.trunc((width - (2 * padding)) / term.renderer.dimensions.actualCellWidth), 1);
-      const rows = Math.max(Math.trunc((height - (2 * padding))  / term.renderer.dimensions.actualCellHeight), 1) - 3;
-      const pty = TerminalService.ptys[sessionID];
-      if (pty) {
-        term.resize(cols, rows);
-        pty.resize(cols, rows);
+      const dims = (<any>session.term).renderer.dimensions;
+      const cols = Math.max(Math.round((width - (2 * padding)) / dims.actualCellWidth), 1);
+      const rows = Math.max(Math.round((height - (2 * padding)) / dims.actualCellHeight), 1) - 3;
+      // log size nicely because we refer to it all the time
+      console.groupCollapsed(`%cTerminal session ${sessionID}`, `color: #0b8043`);
+        console.table({
+          width: {pixels: width, padding: padding, cell: dims.actualCellWidth},
+          height: {pixels: height, padding: padding, cell: dims.actualCellHeight}
+        });
+      console.groupEnd();
+      // finally ready to set rows, cols
+      session.term.resize(cols, rows);
+      session.pty.resize(cols, rows);
+    }
+  }
+
+  /** Kill a pty terminal */
+  swap(sessionID: string,
+       withID: string): void {
+    if (sessionID !== withID) {
+      const p = this.get(sessionID);
+      const q = this.get(withID);
+      if (p.element && q.element) {
+        // see https://stackoverflow.com/questions/9732624/
+        //       how-to-swap-dom-child-nodes-in-javascript
+        const pp = p.element.parentNode;
+        let pt = document.createElement('span');
+        pp.insertBefore(pt, p.element);
+        const pq = q.element.parentNode;
+        const qt = document.createElement('span');
+        pq.insertBefore(qt, q.element);
+        pp.insertBefore(q.element, pt);
+        pq.insertBefore(p.element, qt);
+        // clean up
+        pp.removeChild(pt);
+        pq.removeChild(qt);
+        // swap the elements
+        pt = p.element;
+        p.element = q.element;
+        q.element = pt;
+        // force a resize because we changed from the default font
+        nextTick(() => {
+          const ppe = p.element.parentElement;
+          this.resize(sessionID, ppe.clientWidth, ppe.clientHeight);
+          const pqe = q.element.parentElement;
+          this.resize(withID, pqe.clientWidth, pqe.clientHeight);
+        });
       }
     }
   }
+
+  // lifecycle methods
+
+  ngOnDestroy() {
+    // TODO: this doesn't really work as Angular seems to get shut down
+    // by Electron before it can call lifecycle methods
+    Object.keys(TerminalService.sessions).forEach(sessionID => {
+      const session = this.get(sessionID);
+      if (session.pty)
+        session.pty.kill();
+    });
+  }
+
+}
+
+/**
+ * Model the xterm <==> node-pty session management
+ */
+
+interface Session {
+
+  element: HTMLElement;
+
+  pty: any;
+  term: Terminal;
+
+  pty2term(data: any): void;
+  term2pty(data: any): void;
 
 }

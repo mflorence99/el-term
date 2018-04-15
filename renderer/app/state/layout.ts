@@ -223,12 +223,17 @@ export interface LayoutStateModel {
     const ix = Number(compound[1]);
     const p = LayoutState.findSplitByID(updated, payload.id);
     const q = LayoutState.findSplitByID(updated, withID).splits[ix];
-    p.id = q.id;
-    q.id = payload.id;
-    const prefs = { ...p.prefs };
-    p.prefs = { ...q.prefs };
-    q.prefs = prefs;
-    setState({...updated});
+    if (p.id !== q.id) {
+      // swap the layout
+      p.id = q.id;
+      q.id = payload.id;
+      const prefs = { ...p.prefs };
+      p.prefs = { ...q.prefs };
+      q.prefs = prefs;
+      // swap the sessions
+      this.termSvc.swap(p.id, q.id);
+      setState({...updated});
+    }
   }
 
   @Action(UpdateSplitSizes)
