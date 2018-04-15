@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
 import { ElectronService } from 'ngx-electron';
+import { LayoutPrefs } from '../state/layout';
 import { Terminal } from 'xterm';
 import { nextTick } from 'ellib';
 
@@ -28,6 +29,7 @@ export class TerminalService implements OnDestroy {
 
   /** Connect to a session */
   connect(sessionID: string,
+          prefs: LayoutPrefs,
           element: HTMLElement): Terminal {
     const session = this.get(sessionID);
     // configure a new Terminal if one doesn't exist already
@@ -45,6 +47,7 @@ export class TerminalService implements OnDestroy {
       });
       // connect to DOM
       session.term.open(element);
+      session.term.focus();
       session.term.element.style.padding = `${padding}px`;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).fit();
@@ -59,10 +62,19 @@ export class TerminalService implements OnDestroy {
     // connect to pty
     if (!session.pty) {
       const process = this.electron.process;
+      // replace ~ for $HOME with actual home directory
+      let cwd = process.cwd();
+      if (prefs.directory) {
+        const home = process.env['HOME'];
+        cwd = prefs.directory
+          .replace(/^~/, home)
+          .replace(/^\$HOME/, home);
+      }
+      // launch node-pty over real terminal
       const shell = process.env[this.os.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
       session.pty = this.nodePty.spawn(shell, [], {
         cols: initialCols,
-        cwd: process.cwd(),
+        cwd: cwd,
         env: process.env,
         name: 'xterm-256color',
         rows: initialRows
@@ -76,6 +88,8 @@ export class TerminalService implements OnDestroy {
     if (!session.pty2term) {
       session.pty2term = data => session.term.write(data);
       session.pty.addListener('data', session.pty2term);
+      if (prefs.startup)
+        session.pty.write(`${prefs.startup}\n`);
     }
     // force a resize because we changed from the default font
     nextTick(() => {
@@ -151,7 +165,7 @@ export class TerminalService implements OnDestroy {
     }
   }
 
-  /** Kill a pty terminal */
+  /** Swap one terminal with another */
   swap(sessionID: string,
        withID: string): void {
     if (sessionID !== withID) {

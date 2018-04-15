@@ -45,6 +45,10 @@ export class TabComponent extends LifecycleComponent {
     this.drawerPanel.close();
   }
 
+  onClear(nm: string) {
+    this.tabForm.patchValue({ [nm]: '' }, {emitEvent: false});
+  }
+
   onRemove(areYouSure: boolean) {
     if (areYouSure) {
       // NOTE: we need to make sure a tab is selected after we delete

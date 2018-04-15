@@ -46,6 +46,8 @@ export interface Layout {
 
 export interface LayoutPrefs {
   badge?: string;
+  directory?: string;
+  startup?: string;
 }
 
 export interface LayoutStateModel {

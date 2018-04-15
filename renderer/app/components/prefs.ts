@@ -31,7 +31,9 @@ export class PrefsComponent extends LifecycleComponent {
               private store: Store) {
     super();
     this.prefsForm = this.formBuilder.group({
-      badge: ''
+      badge: '',
+      directory: '',
+      startup: ''
     });
   }
 
@@ -41,8 +43,8 @@ export class PrefsComponent extends LifecycleComponent {
     this.drawerPanel.close();
   }
 
-  onClearBadge() {
-    this.prefsForm.patchValue({ badge: '' }, {emitEvent: false});
+  onClear(nm: string) {
+    this.prefsForm.patchValue({ [nm]: '' }, {emitEvent: false});
   }
 
   onSubmit() {

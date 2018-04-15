@@ -7,7 +7,6 @@
 
 form {
   display: grid;
-  grid-gap: 16px;
   grid-template-columns: 1fr;
 
   .buttons {
@@ -16,6 +15,7 @@ form {
     grid-gap: 16px;
     grid-template-columns: auto auto;
     justify-content: space-between;
+    margin-top: 16px;
 
     .info {
       font-size: 0.8rem;

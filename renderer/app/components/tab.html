@@ -8,6 +8,14 @@
       matInput
       placeholder="Enter a label for this tab"
       type="text">
+    <button
+      (click)="onClear('label')"
+      aria-label="Clear"
+      mat-button
+      mat-icon-button
+      matSuffix>
+      <i class="fas fa-times"></i>
+    </button>
   </mat-form-field>
 
   <div class="iconAndColor">

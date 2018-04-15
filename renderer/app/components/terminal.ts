@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 
+import { LayoutPrefs } from '../state/layout';
 import { TerminalService } from '../services/terminal';
 
 /**
@@ -15,6 +16,7 @@ import { TerminalService } from '../services/terminal';
 
 export class TerminalComponent implements AfterViewInit, OnDestroy {
 
+  @Input() prefs = { } as LayoutPrefs;
   @Input() sessionID: string;
 
   @ViewChild('xterm') xterm: ElementRef;
@@ -25,7 +27,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   // lifecycle methods
 
   ngAfterViewInit() {
-    this.termSvc.connect(this.sessionID, this.xterm.nativeElement);
+    this.termSvc.connect(this.sessionID, this.prefs || { }, this.xterm.nativeElement);
   }
 
   ngOnDestroy() {

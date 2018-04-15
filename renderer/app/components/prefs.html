@@ -9,13 +9,40 @@
       placeholder="Optional badge text"
       type="text">
     <button
-      (click)="onClearBadge()"
+      (click)="onClear('badge')"
       aria-label="Clear"
       mat-button
       mat-icon-button
       matSuffix>
       <i class="fas fa-times"></i>
     </button>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input
+      formControlName="directory"
+      matInput
+      placeholder="Directory to start in (default is cwd)"
+      type="text">
+    <button
+      (click)="onClear('directory')"
+      aria-label="Clear"
+      mat-button
+      mat-icon-button
+      matSuffix>
+      <i class="fas fa-times"></i>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea
+      matAutosizeMaxRows="5"
+      matAutosizeMinRows="1"
+      formControlName="startup"
+      matInput
+      matTextareaAutosize
+      placeholder="Commands to execute on start">
+      </textarea>
   </mat-form-field>
 
   <div class="buttons">
