@@ -33,7 +33,7 @@ export class PaneComponent {
               private store: Store,
               private termSvc: TerminalService) {
     this.onResized = debounce((event: { newWidth, newHeight }) => {
-      this.termSvc.resize(this.sessionID, event.newWidth, event.newHeight);
+      this.termSvc.resize(this.sessionID, { width: event.newWidth, height: event.newHeight });
     }, 250);
   }
 

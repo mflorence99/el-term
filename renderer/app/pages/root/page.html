@@ -40,6 +40,35 @@
 
   <ng-template
     contextMenuItem
+    passive="true">
+    <div>Broadcast to all in this tab...</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'clear')">
+    <div class="terminal">clear</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'ctrl+c')">
+    <div class="terminal">CTRL+C</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'bashrc')">
+    <div class="terminal">source ~/.bashrc</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    divider="true">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
     (execute)="onContextMenu($event, 'prefs')">
     <div>Preferences...</div>
   </ng-template>

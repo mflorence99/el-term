@@ -1,11 +1,13 @@
-import { CloseSplit, LayoutPrefs, LayoutState, MakeSplit } from '../../state/layout';
+import { CloseSplit, Layout, LayoutPrefs, LayoutState, MakeSplit } from '../../state/layout';
 import { Component, ViewChild } from '@angular/core';
 
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { DrawerPanelComponent } from 'ellib';
+import { ElectronService } from 'ngx-electron';
 import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
+import { TerminalService } from '../../services/terminal';
 
 /**
  * EL-Term Root
@@ -31,7 +33,9 @@ export class RootPageComponent {
   swapWith: string;
 
   /** ctor */
-  constructor(private store: Store) { }
+  constructor(private electron: ElectronService,
+              private termSvc: TerminalService,
+              private store: Store) { }
 
   /** Is the close menu enabled? */
   isCloseEnabled(item: {id: string, ix: number}): boolean {
@@ -53,8 +57,24 @@ export class RootPageComponent {
     const id = event.item.id;
     const ix = event.item.ix;
     switch (command) {
+      case 'bashrc':
+        const process = this.electron.process;
+        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
+          this.termSvc.writeln(split.id, `source ${process.env['HOME']}/.bashrc`);
+        });
+        break;
+      case 'ctrl+c':
+        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
+          this.termSvc.ctrl_c(split.id);
+        });
+        break;
+      case 'clear':
+        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
+          this.termSvc.writeln(split.id, 'clear');
+        });
+        break;
       case 'prefs':
-      const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
+        const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
         this.editPrefs = layout.splits[ix].prefs;
         this.editPrefsID = layout.splits[ix].id;
         this.prefsDrawer.open();

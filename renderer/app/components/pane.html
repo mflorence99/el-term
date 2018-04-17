@@ -8,9 +8,15 @@
     class="fa-lg icon">
   </i>
 
-  <div *ngIf="prefs?.badge">
+  <div *ngIf="prefs?.badge; else temporary">
     {{ prefs.badge }}
   </div>
+
+  <ng-template #temporary>
+    <div>
+      {{ sessionID.substring(sessionID.length - 3) }}
+    </div>
+  </ng-template>
 
 </div>
 
