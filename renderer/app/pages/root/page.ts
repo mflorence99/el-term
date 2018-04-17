@@ -8,6 +8,7 @@ import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
+import { nextTick } from 'ellib';
 
 /**
  * EL-Term Root
@@ -70,7 +71,10 @@ export class RootPageComponent {
         break;
       case 'clear':
         LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
-          this.termSvc.writeln(split.id, 'clear');
+          this.termSvc.ctrl_c(split.id);
+          // TODO: this isn't 100% reliable and the clear can be ignored if
+          // the CTRL+C hasn't completed yet
+          nextTick(() => this.termSvc.writeln(split.id, 'clear'));
         });
         break;
       case 'prefs':
