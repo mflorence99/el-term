@@ -40,6 +40,25 @@
 
   <ng-template
     contextMenuItem
+    (execute)="onContextMenu($event, 'copy')"
+    [enabled]="isCopyEnabled.bind(this)">
+    <div>Copy</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'paste')"
+    [enabled]="isPasteEnabled.bind(this)">
+    <div>Paste</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    divider="true">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
     passive="true">
     <div>Broadcast to all in this tab...</div>
   </ng-template>

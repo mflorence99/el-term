@@ -74,11 +74,6 @@ export class TerminalService implements OnDestroy {
     return session.term;
   }
 
-  /** Delete a session */
-  delete(sessionID: string): void {
-    delete TerminalService.sessions[sessionID];
-  }
-
   /** Disconnect from session */
   disconnect(sessionID: string): void {
     const session = this.get(sessionID);
@@ -89,14 +84,23 @@ export class TerminalService implements OnDestroy {
     }
   }
 
-  /** Get a session */
-  get(sessionID: string): Session {
-    let session = TerminalService.sessions[sessionID];
-    if (!session) {
-      session = { id: sessionID } as Session;
-      TerminalService.sessions[sessionID] = session;
-    }
-    return session;
+  /** Grab selected text */
+  getSelection(sessionID: string): string {
+    const session = this.get(sessionID);
+    return session.term? session.term.getSelection() : null;
+  }
+
+  /** Set the focus to the terminal */
+  focus(sessionID: string): void {
+    const session = this.get(sessionID);
+    if (session.term)
+      session.term.focus();
+  }
+
+  /** Any selected text? */
+  hasSelection(sessionID: string): boolean {
+    const session = this.get(sessionID);
+    return session.term? session.term.hasSelection() : false;
   }
 
   /** Kill a pty terminal */
@@ -252,6 +256,21 @@ export class TerminalService implements OnDestroy {
       console.log(`%cENV %c${JSON.stringify(process.env)}`, 'color: black', 'color: gray');
       console.log(`%cCWD %c${cwd}`, 'color: black', 'color: gray');
     }
+  }
+
+  /** Delete a session */
+  private delete(sessionID: string): void {
+    delete TerminalService.sessions[sessionID];
+  }
+
+  /** Get a session */
+  private get(sessionID: string): Session {
+    let session = TerminalService.sessions[sessionID];
+    if (!session) {
+      session = { id: sessionID } as Session;
+      TerminalService.sessions[sessionID] = session;
+    }
+    return session;
   }
 
   private resizeByCols(session: Session,

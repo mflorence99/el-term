@@ -44,6 +44,17 @@ export class RootPageComponent {
         || (this.splittable.layout.splits.length > 1);
   }
 
+  /** Is the copy menu enabled? */
+  isCopyEnabled(item: {id: string, ix: number}): boolean {
+    const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, item.id);
+    return this.termSvc.hasSelection(layout.splits[item.ix].id);
+  }
+
+  /** Is the paste menu enabled? */
+  isPasteEnabled(item: {id: string, ix: number}): boolean {
+    return !!this.electron.clipboard.readText();
+  }
+
   /** Is the swap menu enabled? */
   isSwapEnabled(item: {id: string, ix: number}): boolean {
     return this.isCloseEnabled(item);
@@ -57,7 +68,18 @@ export class RootPageComponent {
     const actions = [];
     const id = event.item.id;
     const ix = event.item.ix;
+    // make sure the session has the focus
+    const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
+    const split = layout.splits[ix];
+    this.termSvc.focus(split.id);
+    // act on command
     switch (command) {
+      case 'copy':
+        this.electron.clipboard.writeText(this.termSvc.getSelection(split.id));
+        break;
+      case 'paste':
+        this.termSvc.write(split.id, this.electron.clipboard.readText());
+        break;
       case 'bashrc':
         const process = this.electron.process;
         LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
@@ -78,9 +100,8 @@ export class RootPageComponent {
         });
         break;
       case 'prefs':
-        const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
-        this.editPrefs = layout.splits[ix].prefs;
-        this.editPrefsID = layout.splits[ix].id;
+        this.editPrefs = split.prefs;
+        this.editPrefsID = split.id;
         this.prefsDrawer.open();
         break;
       case 'swapWith':
