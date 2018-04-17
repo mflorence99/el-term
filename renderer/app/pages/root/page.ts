@@ -1,4 +1,4 @@
-import { CloseSplit, Layout, LayoutPrefs, LayoutState, MakeSplit } from '../../state/layout';
+import { CloseSplit, Layout, LayoutPrefs, LayoutSearch, LayoutState, MakeSplit } from '../../state/layout';
 import { Component, ViewChild } from '@angular/core';
 
 import { ContextMenuComponent } from 'ngx-contextmenu';
@@ -26,11 +26,17 @@ export class RootPageComponent {
   @ViewChild(SplittableComponent) splittable: SplittableComponent;
 
   @ViewChild('prefsDrawer') prefsDrawer: DrawerPanelComponent;
+  @ViewChild('searchDrawer') searchDrawer: DrawerPanelComponent;
   @ViewChild('tabDrawer') tabDrawer: DrawerPanelComponent;
 
   editPrefs = { } as LayoutPrefs;
   editPrefsID: string;
+
+  editSearch = { } as LayoutSearch;
+  editSearchID: string;
+
   editTab = { } as Tab;
+
   swapWith: string;
 
   /** ctor */
@@ -79,6 +85,11 @@ export class RootPageComponent {
         break;
       case 'paste':
         this.termSvc.write(split.id, this.electron.clipboard.readText());
+        break;
+      case 'search':
+        this.editSearch = split.search;
+        this.editSearchID = split.id;
+        this.searchDrawer.open();
         break;
       case 'bashrc':
         const process = this.electron.process;

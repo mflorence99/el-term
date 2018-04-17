@@ -1,0 +1,53 @@
+<form
+  [formGroup]="searchForm"
+  novalidate>
+
+  <mat-form-field>
+    <input
+      formControlName="str"
+      matInput
+      placeholder="Text to search for"
+      type="text">
+    <button
+      (click)="onClear('str')"
+      aria-label="Clear"
+      mat-button
+      mat-icon-button
+      matSuffix>
+      <i class="fas fa-times"></i>
+    </button>
+  </mat-form-field>
+
+  <div class="buttons">
+
+    <a
+      (click)="onCancel()"
+      mat-button>
+      Cancel
+    </a>
+
+    <div class="nextAndPrev">
+
+      <button
+        (click)="onSubmit('prev')"
+        [disabled]="searchForm.invalid"
+        color="primary"
+        mat-raised-button
+        type="submit">
+        Find Previous
+      </button>
+
+      <button
+        (click)="onSubmit('next')"
+        [disabled]="searchForm.invalid"
+        color="primary"
+        mat-raised-button
+        type="submit">
+        Find Next
+      </button>
+
+    </div>
+
+  </div>
+
+</form>

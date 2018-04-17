@@ -90,6 +90,24 @@ export class TerminalService implements OnDestroy {
     return session.term? session.term.getSelection() : null;
   }
 
+  /** Find the next occurrence */
+  findNext(sessionID: string,
+           str: string): void {
+    const session = this.get(sessionID);
+    if (session.term)
+      // NOTE: see https://github.com/xtermjs/xterm.js/#importing
+      (<any>session.term).findNext(str);
+  }
+
+  /** Find the previous occurrence */
+  findPrevious(sessionID: string,
+               str: string): void {
+    const session = this.get(sessionID);
+    if (session.term)
+      // NOTE: see https://github.com/xtermjs/xterm.js/#importing
+      (<any>session.term).findPrevious(str);
+  }
+
   /** Set the focus to the terminal */
   focus(sessionID: string): void {
     const session = this.get(sessionID);
@@ -221,6 +239,7 @@ export class TerminalService implements OnDestroy {
       session.term.element.style.padding = `${padding}px`;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).fit();
+      (<any>session.term).webLinksInit();
       session.element = element;
       console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
     }

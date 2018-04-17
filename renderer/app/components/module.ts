@@ -2,6 +2,7 @@ import { BarrelModule } from '../barrel';
 import { NgModule } from '@angular/core';
 import { PaneComponent } from './pane';
 import { PrefsComponent } from './prefs';
+import { SearchComponent } from './search';
 import { SplittableComponent } from './splittable';
 import { TabComponent } from './tab';
 import { TabsComponent } from './tabs';
@@ -14,6 +15,7 @@ import { TerminalComponent } from './terminal';
 const COMPONENTS = [
   PaneComponent,
   PrefsComponent,
+  SearchComponent,
   SplittableComponent,
   TabComponent,
   TabsComponent,

@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { LayoutPrefs, LayoutSearch } from '../state/layout';
 
-import { LayoutPrefs } from '../state/layout';
 import { TerminalService } from '../services/terminal';
 
 /**
@@ -17,6 +17,7 @@ import { TerminalService } from '../services/terminal';
 export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   @Input() prefs = { } as LayoutPrefs;
+  @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
 
   @ViewChild('xterm') xterm: ElementRef;

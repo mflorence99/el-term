@@ -34,6 +34,17 @@
 
   </lib-drawer-panel>
 
+  <lib-drawer-panel
+    #searchDrawer
+    position="bottom">
+
+    <elterm-search
+      [search]="editSearch"
+      [searchID]="editSearchID">
+    </elterm-search>
+
+  </lib-drawer-panel>
+
 </lib-drawer-container>
 
 <context-menu>
@@ -50,6 +61,12 @@
     (execute)="onContextMenu($event, 'paste')"
     [enabled]="isPasteEnabled.bind(this)">
     <div>Paste</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'search')">
+    <div>Search...</div>
   </ng-template>
 
   <ng-template

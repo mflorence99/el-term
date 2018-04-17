@@ -27,6 +27,10 @@ export class SetPrefs {
   constructor(public readonly payload: {id: string, prefs: LayoutPrefs}) { }
 }
 
+export class SetSearch {
+  constructor(public readonly payload: {id: string, search: LayoutSearch}) { }
+}
+
 export class SwapWith {
   constructor(public readonly payload: {id: string, with: string}) { }
 }
@@ -40,6 +44,7 @@ export interface Layout {
   id: string;
   prefs?: LayoutPrefs;
   root?: boolean;
+  search?: LayoutSearch;
   size: number;
   splits?: Layout[];
 }
@@ -48,6 +53,10 @@ export interface LayoutPrefs {
   badge?: string;
   directory?: string;
   startup?: string;
+}
+
+export interface LayoutSearch {
+  str?: string;
 }
 
 export interface LayoutStateModel {
@@ -215,6 +224,16 @@ export interface LayoutStateModel {
     setState({...updated});
   }
 
+  @Action(SetSearch)
+  setSearch({ getState, setState }: StateContext<LayoutStateModel>,
+            { payload }: SetSearch) {
+    const updated = getState();
+    const split = LayoutState.findSplitByID(updated, payload.id);
+    if (split)
+      split.search = { ...payload.search };
+    setState({...updated});
+  }
+
   @Action(SwapWith)
   swapWith({ getState, setState }: StateContext<LayoutStateModel>,
            { payload }: SwapWith) {
@@ -232,6 +251,9 @@ export interface LayoutStateModel {
       const prefs = { ...p.prefs };
       p.prefs = { ...q.prefs };
       q.prefs = prefs;
+      const search = { ...p.search };
+      p.search = { ...q.search };
+      q.search = search;
       // swap the sessions
       this.termSvc.swap(p.id, q.id);
       setState({...updated});

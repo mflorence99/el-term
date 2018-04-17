@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, Input } from '@angular/core';
-import { LayoutPrefs, SwapWith } from '../state/layout';
+import { LayoutPrefs, LayoutSearch, SwapWith } from '../state/layout';
 
 import { RootPageComponent } from '../pages/root/page';
 import { Store } from '@ngxs/store';
@@ -21,6 +21,7 @@ import { debounce } from 'ellib';
 export class PaneComponent {
 
   @Input() prefs = { } as LayoutPrefs;
+  @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
   @Input() swapWith: string;
   @Input() tab: Tab;
