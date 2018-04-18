@@ -53,7 +53,8 @@ export class TerminalService implements OnDestroy {
   /** Connect to a session */
   connect(sessionID: string,
           prefs: LayoutPrefs,
-          element: HTMLElement): Terminal {
+          element: HTMLElement,
+          dataHandler: Function): Terminal {
     const session = this.get(sessionID);
     console.groupCollapsed(`%cconnect('${sessionID}')`, `color: #5d4037`);
     // configure a new Terminal if one doesn't exist already
@@ -65,7 +66,7 @@ export class TerminalService implements OnDestroy {
       session.term.on('data', session.term2pty);
     }
     if (!session.pty2term) {
-      session.pty2term = data => session.term.write(data);
+      session.pty2term = data => session.term.write(dataHandler(data));
       session.pty.addListener('data', session.pty2term);
       if (prefs.startup) {
         session.pty.write(`${prefs.startup}\n`);

@@ -45,6 +45,7 @@ export class SearchComponent extends LifecycleComponent {
 
   onClear(nm: string) {
     this.searchForm.patchValue({ [nm]: '' }, {emitEvent: false});
+    this.store.dispatch(new SetSearch({ id: this.searchID, search: { str: '' } }));
   }
 
   onSubmit(dir: 'next' | 'prev') {
