@@ -29,6 +29,13 @@ export class TerminalService implements OnDestroy {
     this.psTree = this.electron.remote.require('ps-tree');
   }
 
+  /** Clear a session */
+  clear(sessionID: string): void {
+    const session = this.get(sessionID);
+    if (session.term)
+      session.term.clear();
+  }
+
   /** CTRL+C a session */
   ctrl_c(sessionID: string): void {
     const session = this.get(sessionID);
@@ -64,6 +71,9 @@ export class TerminalService implements OnDestroy {
         session.pty.write(`${prefs.startup}\n`);
         console.log(`%cStart commands %c${prefs.startup.replace(/[\n\r]/g, ', ')}`, 'color: black', 'color: gray');
       }
+      // create an observer for scroll position changes
+      session.scroll = y => session.scrollPos = y;
+      session.term.on('scroll', session.scroll);
     }
     console.groupEnd();
     // force a resize because we changed from the default font
@@ -84,28 +94,30 @@ export class TerminalService implements OnDestroy {
     }
   }
 
-  /** Grab selected text */
-  getSelection(sessionID: string): string {
-    const session = this.get(sessionID);
-    return session.term? session.term.getSelection() : null;
-  }
-
   /** Find the next occurrence */
   findNext(sessionID: string,
-           str: string): void {
+           str: string): boolean {
     const session = this.get(sessionID);
-    if (session.term)
+    if (session.term) {
+      const before = session.scrollPos;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).findNext(str);
+      return session.scrollPos < before;
+    }
+    else return false;
   }
 
   /** Find the previous occurrence */
   findPrevious(sessionID: string,
-               str: string): void {
+               str: string): boolean {
     const session = this.get(sessionID);
-    if (session.term)
+    if (session.term) {
+      const before = session.scrollPos;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).findPrevious(str);
+      return session.scrollPos > before;
+    }
+    else return false;
   }
 
   /** Set the focus to the terminal */
@@ -113,6 +125,12 @@ export class TerminalService implements OnDestroy {
     const session = this.get(sessionID);
     if (session.term)
       session.term.focus();
+  }
+
+  /** Grab selected text */
+  getSelection(sessionID: string): string {
+    const session = this.get(sessionID);
+    return session.term? session.term.getSelection() : null;
   }
 
   /** Any selected text? */
@@ -130,6 +148,7 @@ export class TerminalService implements OnDestroy {
     }
     if (session.term) {
       session.term.off('data', session.term2pty);
+      session.term.off('scroll', session.scroll);
       session.term.destroy();
     }
     this.delete(sessionID);
@@ -340,10 +359,13 @@ interface Session {
 
   element: HTMLElement;
 
+  scrollPos: number;
+
   pty: any;
   term: Terminal;
 
   pty2term(data: any): void;
   term2pty(data: any): void;
+  scroll(y: number): void;
 
 }

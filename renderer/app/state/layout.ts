@@ -31,6 +31,10 @@ export class SetSearch {
   constructor(public readonly payload: {id: string, search: LayoutSearch}) { }
 }
 
+export class SetSearchWrap {
+  constructor(public readonly payload: {id: string, wrap: boolean}) { }
+}
+
 export class SwapWith {
   constructor(public readonly payload: {id: string, with: string}) { }
 }
@@ -57,6 +61,7 @@ export interface LayoutPrefs {
 
 export interface LayoutSearch {
   str?: string;
+  wrap?: boolean;
 }
 
 export interface LayoutStateModel {
@@ -78,6 +83,7 @@ export interface LayoutStateModel {
       id: UUID.UUID(),
       prefs: { } as LayoutPrefs,
       root: true,
+      search: { } as LayoutSearch,
       size: 100,
       splits: [
         {
@@ -231,6 +237,16 @@ export interface LayoutStateModel {
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split)
       split.search = { ...payload.search };
+    setState({...updated});
+  }
+
+  @Action(SetSearchWrap)
+  setSearchWrap({ getState, setState }: StateContext<LayoutStateModel>,
+                { payload }: SetSearchWrap) {
+    const updated = getState();
+    const split = LayoutState.findSplitByID(updated, payload.id);
+    if (split)
+      split.search.wrap = payload.wrap;
     setState({...updated});
   }
 

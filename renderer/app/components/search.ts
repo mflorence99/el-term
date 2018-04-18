@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LayoutSearch, SetSearch } from '../state/layout';
+import { LayoutSearch, SetSearch, SetSearchWrap } from '../state/layout';
 
 import { DrawerPanelComponent } from 'ellib';
 import { LifecycleComponent } from 'ellib';
@@ -49,13 +49,21 @@ export class SearchComponent extends LifecycleComponent {
 
   onSubmit(dir: 'next' | 'prev') {
     this.store.dispatch(new SetSearch({ id: this.searchID, search: this.searchForm.value }));
+    let wrap: boolean;
     switch (dir) {
       case 'next':
-        this.termSvc.findNext(this.searchID, this.searchForm.value.str);
+        wrap = this.termSvc.findNext(this.searchID, this.searchForm.value.str);
         break;
       case 'prev':
-        this.termSvc.findPrevious(this.searchID, this.searchForm.value.str);
+        wrap = this.termSvc.findPrevious(this.searchID, this.searchForm.value.str);
         break;
+    }
+    // highlight if we wrap
+    if (wrap) {
+      this.store.dispatch(new SetSearchWrap({ id: this.searchID, wrap: true }));
+      setTimeout(() => {
+        this.store.dispatch(new SetSearchWrap({ id: this.searchID, wrap: false }));
+      }, 1500);
     }
   }
 
