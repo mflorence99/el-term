@@ -51,6 +51,27 @@
 
   <ng-template
     contextMenuItem
+    (execute)="onContextMenu($event, 'reload')"
+    [visible]="isDevMode.bind(this)">
+    <div>Reload app</div>
+    <div class="accelerator">Ctrl+R</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'dev-tools')"
+    [visible]="isDevMode.bind(this)">
+    <div>Open dev tools...</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    divider="true"
+    [visible]="isDevMode.bind(this)">
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
     (execute)="onContextMenu($event, 'copy')"
     [enabled]="isCopyEnabled.bind(this)">
     <div>Copy</div>

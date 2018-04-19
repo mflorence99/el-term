@@ -39,13 +39,14 @@ export class SearchComponent extends LifecycleComponent {
 
   // event handlers
 
-  onCancel() {
-    this.drawerPanel.close();
-  }
-
   onClear(nm: string) {
     this.searchForm.patchValue({ [nm]: '' }, {emitEvent: false});
-    this.store.dispatch(new SetSearch({ id: this.searchID, search: { str: '' } }));
+  }
+
+  onSave() {
+    this.store.dispatch(new SetSearch({ id: this.searchID, search: this.searchForm.value }));
+    this.drawerPanel.close();
+    this.termSvc.focus(this.searchID);
   }
 
   onSubmit(dir: 'next' | 'prev') {

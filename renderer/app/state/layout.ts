@@ -57,6 +57,7 @@ export interface LayoutPrefs {
   badge?: string;
   directory?: string;
   startup?: string;
+  title?: string;
 }
 
 export interface LayoutSearch {
@@ -225,8 +226,11 @@ export interface LayoutStateModel {
            { payload }: SetPrefs) {
     const updated = getState();
     const split = LayoutState.findSplitByID(updated, payload.id);
-    if (split)
-      split.prefs = { ...payload.prefs };
+    if (split) {
+      // NOTE: a bit convoluted as the payload may contain just some of the prefs
+      split.prefs = split.prefs || { };
+      Object.assign(split.prefs, payload.prefs);
+    }
     setState({...updated});
   }
 

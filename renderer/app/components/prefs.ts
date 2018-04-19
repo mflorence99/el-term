@@ -6,6 +6,7 @@ import { DrawerPanelComponent } from 'ellib';
 import { LifecycleComponent } from 'ellib';
 import { OnChange } from 'ellib';
 import { Store } from '@ngxs/store';
+import { TerminalService } from '../services/terminal';
 
 /**
  * Prefs component
@@ -28,7 +29,8 @@ export class PrefsComponent extends LifecycleComponent {
   /** ctor */
   constructor(private drawerPanel: DrawerPanelComponent,
               private formBuilder: FormBuilder,
-              private store: Store) {
+              private store: Store,
+              private termSvc: TerminalService) {
     super();
     this.prefsForm = this.formBuilder.group({
       badge: '',
@@ -41,6 +43,7 @@ export class PrefsComponent extends LifecycleComponent {
 
   onCancel() {
     this.drawerPanel.close();
+    this.termSvc.focus(this.prefsID);
   }
 
   onClear(nm: string) {

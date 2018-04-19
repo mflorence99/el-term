@@ -1,6 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
-import { LayoutPrefs, LayoutSearch } from '../state/layout';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { CloseSplit, LayoutPrefs, LayoutSearch } from '../state/layout';
 
+import { ElectronService } from 'ngx-electron';
+import { PaneComponent } from '../components/pane';
+import { RootPageComponent } from '../pages/root/page';
+import { SetPrefs } from '../state/layout';
+import { SplittableComponent } from '../components/splittable';
+import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
 
 /**
@@ -20,10 +26,17 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
 
+  @Output() focused = new EventEmitter<boolean>();
+
   @ViewChild('xterm') xterm: ElementRef;
 
   /** ctor */
-  constructor(private termSvc: TerminalService) { }
+  constructor(private electron: ElectronService,
+              private pane: PaneComponent,
+              private root: RootPageComponent,
+              private splittable: SplittableComponent,
+              private store: Store,
+              private termSvc: TerminalService) { }
 
   // lifecycle methods
 
@@ -31,7 +44,10 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
     this.termSvc.connect(this.sessionID,
                          this.prefs || { },
                          this.xterm.nativeElement,
-                         this.dataHandler.bind(this));
+                         this.dataHandler.bind(this),
+                         this.focusHandler.bind(this),
+                         this.keyHandler.bind(this),
+                         this.titleHandler.bind(this));
   }
 
   ngOnDestroy() {
@@ -57,6 +73,25 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
       data = data.replace(RegExp(unhighlighted, 'g'), '$1');
     }
     return data;
+  }
+
+  private focusHandler(focused: boolean): void {
+    this.focused.emit(focused);
+  }
+
+  private keyHandler(event: KeyboardEvent): void {
+    if (this.root.isDevMode() && event.ctrlKey && event.code === 'KeyR') {
+      const win = this.electron.remote.getCurrentWindow();
+      win.webContents.reload();
+    }
+    // NOTE: as little tricky as we have to close on the parent
+    if (event.ctrlKey && event.code === 'KeyW')
+      this.store.dispatch(new CloseSplit({ id: this.splittable.layout.id,
+                                           ix: this.pane.index }));
+  }
+
+  private titleHandler(title: string): void {
+    this.store.dispatch(new SetPrefs({ id: this.sessionID, prefs: { title } }));
   }
 
 }

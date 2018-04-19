@@ -1,6 +1,5 @@
-import { Injectable, OnDestroy } from '@angular/core';
-
 import { ElectronService } from 'ngx-electron';
+import { Injectable } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
 import { Terminal } from 'xterm';
 import { nextTick } from 'ellib';
@@ -14,7 +13,7 @@ const padding = 16;
  */
 
 @Injectable()
-export class TerminalService implements OnDestroy {
+export class TerminalService {
 
   private static sessions: { [sessionID: string]: Session } = { };
 
@@ -54,7 +53,10 @@ export class TerminalService implements OnDestroy {
   connect(sessionID: string,
           prefs: LayoutPrefs,
           element: HTMLElement,
-          dataHandler: Function): Terminal {
+          dataHandler: Function,
+          focusHandler: Function,
+          keyHandler: Function,
+          titleHandler: Function): Terminal {
     const session = this.get(sessionID);
     console.groupCollapsed(`%cconnect('${sessionID}')`, `color: #5d4037`);
     // configure a new Terminal if one doesn't exist already
@@ -72,9 +74,20 @@ export class TerminalService implements OnDestroy {
         session.pty.write(`${prefs.startup}\n`);
         console.log(`%cStart commands %c${prefs.startup.replace(/[\n\r]/g, ', ')}`, 'color: black', 'color: gray');
       }
-      // create an observer for scroll position changes
+      // listen for scroll position changes
       session.scroll = y => session.scrollPos = y;
       session.term.on('scroll', session.scroll);
+      // listen for title changes
+      session.title = title => titleHandler(title);
+      session.term.on('title', session.title);
+      // listen for keystrokes
+      session.key = (_, event) => keyHandler(event);
+      session.term.on('key', session.key);
+      // listen for focus changes
+      session.blur = () => focusHandler(false);
+      session.focus = () => focusHandler(true);
+      session.term.on('blur', session.blur);
+      session.term.on('focus', session.focus);
     }
     console.groupEnd();
     // force a resize because we changed from the default font
@@ -144,12 +157,17 @@ export class TerminalService implements OnDestroy {
   kill(sessionID: string): void {
     const session = this.get(sessionID);
     if (session.pty) {
+      this.electron.ipcRenderer.send('kill', session.pty.pid);
       session.pty.removeListener('data', session.pty2term);
       session.pty.destroy();
     }
     if (session.term) {
+      session.term.off('blur', session.blur);
       session.term.off('data', session.term2pty);
+      session.term.off('focus', session.focus);
+      session.term.off('key', session.key);
       session.term.off('scroll', session.scroll);
+      session.term.off('title', session.title);
       session.term.destroy();
     }
     this.delete(sessionID);
@@ -222,18 +240,6 @@ export class TerminalService implements OnDestroy {
     this.write(sessionID, `${cmd}\n`);
   }
 
-  // lifecycle methods
-
-  ngOnDestroy() {
-    // TODO: this doesn't really work as Angular seems to get shut down
-    // by Electron before it can call lifecycle methods
-    Object.keys(TerminalService.sessions).forEach(sessionID => {
-      const session = this.get(sessionID);
-      if (session.pty)
-        session.pty.kill();
-    });
-  }
-
   // private methods
 
   private connect2term(session: Session,
@@ -292,6 +298,7 @@ export class TerminalService implements OnDestroy {
         name: 'xterm-256color',
         rows: initialRows
       });
+      this.electron.ipcRenderer.send('connect', session.pty.pid);
       console.log(`%cENV %c${JSON.stringify(process.env)}`, 'color: black', 'color: gray');
       console.log(`%cCWD %c${cwd}`, 'color: black', 'color: gray');
     }
@@ -367,6 +374,11 @@ interface Session {
 
   pty2term(data: any): void;
   term2pty(data: any): void;
+
+  blur(): void;
+  focus(): void;
+  key(key: number, event: KeyboardEvent): void;
   scroll(y: number): void;
+  title(title: string): void;
 
 }

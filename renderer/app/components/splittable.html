@@ -3,7 +3,7 @@
   [direction]="layout.direction"
   [useTransition]="true"
   gutterColor="#424242"
-  gutterSize="3">
+  gutterSize="5">
 
   <ng-template
     ngFor
@@ -21,6 +21,7 @@
         <elterm-pane
           [contextMenu]="menu"
           [contextMenuSubject]="{id: layout.id, ix: ix}"
+          [index]="ix"
           [prefs]="split.prefs"
           [search]="split.search"
           [sessionID]="split.id"

@@ -4,10 +4,12 @@ import { Component, ViewChild } from '@angular/core';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { DrawerPanelComponent } from 'ellib';
 import { ElectronService } from 'ngx-electron';
+import { SetBounds } from '../../state/window';
 import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
+import { debounce } from 'ellib';
 
 /**
  * EL-Term Root
@@ -41,7 +43,11 @@ export class RootPageComponent {
   /** ctor */
   constructor(private electron: ElectronService,
               private termSvc: TerminalService,
-              private store: Store) { }
+              private store: Store) {
+    this.electron.ipcRenderer.on('bounds', debounce((event, bounds) => {
+      this.store.dispatch(new SetBounds(bounds));
+    }, 250));
+  }
 
   /** Is the close menu enabled? */
   isCloseEnabled(item: {id: string, ix: number}): boolean {
@@ -53,6 +59,11 @@ export class RootPageComponent {
   isCopyEnabled(item: {id: string, ix: number}): boolean {
     const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, item.id);
     return this.termSvc.hasSelection(layout.splits[item.ix].id);
+  }
+
+  /** Are dev tools visible? */
+  isDevMode(): boolean {
+    return this.electron.process.env['DEV_MODE'] === '1';
   }
 
   /** Is the paste menu enabled? */
@@ -73,12 +84,19 @@ export class RootPageComponent {
     const actions = [];
     const id = event.item.id;
     const ix = event.item.ix;
+    const win = this.electron.remote.getCurrentWindow();
     // make sure the session has the focus
     const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
     const split = layout.splits[ix];
     this.termSvc.focus(split.id);
     // act on command
     switch (command) {
+      case 'reload':
+        win.webContents.reload();
+        break;
+      case 'dev-tools':
+        win.webContents.openDevTools();
+        break;
       case 'copy':
         this.electron.clipboard.writeText(this.termSvc.getSelection(split.id));
         break;

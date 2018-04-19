@@ -12,7 +12,7 @@ elterm-terminal {
   z-index: 1;
 }
 
-.overlay {
+.badge {
   align-items: center;
   display: grid;
   filter: opacity(50%);
@@ -21,8 +21,12 @@ elterm-terminal {
   grid-template-columns: auto auto;
   position: absolute;
   right: 16px;
-  top: 16px;
+  top: 24px;
   z-index: 2;
+
+  &.focused {
+    filter: opacity(100%);
+  }
 
   &.swapping {
     color: var(--accent-color) !important;
@@ -35,6 +39,18 @@ elterm-terminal {
     animation-name: wrapping;
     animation-timing-function: ease-in-out;
     color: var(--accent-color) !important;
+  }
+
+}
+
+.title {
+  filter: opacity(50%);
+  position: absolute;
+  right: 16px;
+  z-index: 2;
+
+  &.focused {
+    filter: opacity(100%);
   }
 
 }

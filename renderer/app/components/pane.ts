@@ -20,12 +20,14 @@ import { debounce } from 'ellib';
 
 export class PaneComponent {
 
+  @Input() index: number;
   @Input() prefs = { } as LayoutPrefs;
   @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
   @Input() swapWith: string;
   @Input() tab: Tab;
 
+  focused: boolean;
   onResized: Function;
   swapping: boolean;
 
@@ -54,6 +56,10 @@ export class PaneComponent {
 
   @HostListener('mouseleave') onMouseLeave() {
     this.swapping = false;
+  }
+
+  onFocus(focused: boolean) {
+    this.focused = focused;
   }
 
 }

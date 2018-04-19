@@ -1,26 +1,29 @@
 <div
-  [ngClass]="{swapping: swapping, wrapping: search?.wrap}"
+  [ngClass]="{focused: focused}"
   [ngStyle]="{color: tab.color}"
-  class="overlay">
+  *ngIf="prefs?.title"
+  class="title">
+  {{ prefs.title }}
+</div>
+
+<div
+  [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
+  [ngStyle]="{color: tab.color}"
+  class="badge">
 
   <i
     [ngClass]="tab.icon"
     class="fa-lg icon">
   </i>
 
-  <div *ngIf="prefs?.badge; else temporary">
+  <div *ngIf="prefs?.badge">
     {{ prefs.badge }}
   </div>
-
-  <ng-template #temporary>
-    <div>
-      {{ sessionID.substring(sessionID.length - 3) }}
-    </div>
-  </ng-template>
 
 </div>
 
 <elterm-terminal
+  (focused)="onFocus($event)"
   (libResized)="onResized($event)"
   [prefs]="prefs"
   [search]="search"

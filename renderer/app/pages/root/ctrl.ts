@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Layout, LayoutState, LayoutStateModel } from '../../state/layout';
 import { Tab, TabsState, TabsStateModel } from '../../state/tabs';
-import { map, switchMap } from 'rxjs/operators';
+import { WindowState, WindowStateModel } from '../../state/window';
+import { map, switchMap, take } from 'rxjs/operators';
 
+import { ElectronService } from 'ngx-electron';
 import { Observable } from 'rxjs/Observable';
 import { Select } from '@ngxs/store';
 
@@ -21,6 +23,7 @@ export class RootCtrlComponent {
 
   @Select(LayoutState) layouts$: Observable<LayoutStateModel>;
   @Select(TabsState) tabs$: Observable<TabsStateModel>;
+  @Select(WindowState) window$: Observable<WindowStateModel>;
 
   tab$: Observable<Tab> = this.tabs$.pipe(
     map((tabs: TabsStateModel) => tabs.tabs.find(tab => tab.selected))
@@ -37,5 +40,14 @@ export class RootCtrlComponent {
       );
     })
   );
+
+  /** ctor */
+  constructor(private electron: ElectronService) {
+    this.window$.pipe(take(1))
+      .subscribe((window: WindowStateModel) => {
+        const win = this.electron.remote.getCurrentWindow();
+        win.setBounds(window.bounds);
+      });
+  }
 
 }
