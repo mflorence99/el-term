@@ -56,7 +56,8 @@ export class TerminalService {
           dataHandler: Function,
           focusHandler: Function,
           keyHandler: Function,
-          titleHandler: Function): Terminal {
+          titleHandler: Function,
+          scrollHandler: Function): Terminal {
     const session = this.get(sessionID);
     console.groupCollapsed(`%cconnect('${sessionID}')`, `color: #5d4037`);
     // configure a new Terminal if one doesn't exist already
@@ -66,28 +67,32 @@ export class TerminalService {
     if (!session.term2pty) {
       session.term2pty = data => session.pty.write(data);
       session.term.on('data', session.term2pty);
+      // wire up handlers
+      // NOTE: the data handler is treated specially, because we wire it
+      // as an intermediary between term and pty
+      session.handlers = {
+        blur: () => focusHandler(false),
+        data: data => dataHandler(data),
+        focus: () => focusHandler(true),
+        key: (_, event) => keyHandler(event),
+        scroll: y => scrollHandler(y),
+        title: title => titleHandler(title),
+      };
+      Object.keys(session.handlers)
+        .filter(evt => evt !== 'data')
+        .forEach(evt => {
+          const handler = session.handlers[evt];
+          session.term.on(evt, handler);
+        });
     }
     if (!session.pty2term) {
-      session.pty2term = data => session.term.write(dataHandler(data));
+      // NOTE: dataHandler used as filter
+      session.pty2term = data => session.term.write(session.handlers.data(data));
       session.pty.addListener('data', session.pty2term);
       if (prefs.startup) {
         session.pty.write(`${prefs.startup}\n`);
         console.log(`%cStart commands %c${prefs.startup.replace(/[\n\r]/g, ', ')}`, 'color: black', 'color: gray');
       }
-      // listen for scroll position changes
-      session.scroll = y => session.scrollPos = y;
-      session.term.on('scroll', session.scroll);
-      // listen for title changes
-      session.title = title => titleHandler(title);
-      session.term.on('title', session.title);
-      // listen for keystrokes
-      session.key = (_, event) => keyHandler(event);
-      session.term.on('key', session.key);
-      // listen for focus changes
-      session.blur = () => focusHandler(false);
-      session.focus = () => focusHandler(true);
-      session.term.on('blur', session.blur);
-      session.term.on('focus', session.focus);
     }
     console.groupEnd();
     // force a resize because we changed from the default font
@@ -162,12 +167,14 @@ export class TerminalService {
       session.pty.destroy();
     }
     if (session.term) {
-      session.term.off('blur', session.blur);
       session.term.off('data', session.term2pty);
-      session.term.off('focus', session.focus);
-      session.term.off('key', session.key);
-      session.term.off('scroll', session.scroll);
-      session.term.off('title', session.title);
+      // unwire handlers
+      Object.keys(session.handlers)
+        .filter(evt => evt !== 'data')
+        .forEach(evt => {
+          const handler = session.handlers[evt];
+          session.term.on(evt, handler);
+        });
       session.term.destroy();
     }
     this.delete(sessionID);
@@ -184,6 +191,13 @@ export class TerminalService {
       else if (size.cols && size.rows)
         this.resizeByCols(session, size.cols, size.rows);
     }
+  }
+
+  /** Record the scroll position */
+  scrollPos(sessionID: string,
+            y: number): void {
+    const session = this.get(sessionID);
+    session.scrollPos = y;
   }
 
   /** Swap one terminal with another */
@@ -212,7 +226,26 @@ export class TerminalService {
         const temp = p.element;
         p.element = q.element;
         q.element = temp;
-        // force a resize because we changed from the default font
+        // rewire the handlers -- assume both sessions have same handlers
+        Object.keys(p.handlers)
+          .filter(evt => evt !== 'data')
+          .forEach(evt => {
+            p.term.off(evt, p.handlers[evt]);
+            q.term.off(evt, q.handlers[evt]);
+            const handler = p.handlers[evt];
+            p.handlers[evt] = q.handlers[evt];
+            q.handlers[evt] = handler;
+            p.term.on(evt, p.handlers[evt]);
+            q.term.on(evt, q.handlers[evt]);
+          });
+          // NOTE: remember that the data handler is just a filter
+          const handler = p.handlers.data;
+          p.handlers.data = q.handlers.data;
+          q.handlers.data = handler;
+        // force a resize
+        // NOTE: setting the OTHER session's dimensions is a shortcut,
+        // as resize itself will store the new dimensions in the session
+        // so we don't have to swap them first
         nextTick(() => {
           const ps = { rows: q.rows, cols: q.cols };
           const qs = { rows: p.rows, cols: p.cols };
@@ -359,26 +392,15 @@ export class TerminalService {
  */
 
 interface Session {
-
-  id: string;
-
   cols: number;
-  rows: number;
-
   element: HTMLElement;
-
-  scrollPos: number;
-
+  handlers: { [s: string]: any; };
+  id: string;
   pty: any;
+  rows: number;
+  scrollPos: number;
   term: Terminal;
 
   pty2term(data: any): void;
   term2pty(data: any): void;
-
-  blur(): void;
-  focus(): void;
-  key(key: number, event: KeyboardEvent): void;
-  scroll(y: number): void;
-  title(title: string): void;
-
 }

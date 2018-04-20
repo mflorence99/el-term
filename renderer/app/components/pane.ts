@@ -27,9 +27,9 @@ export class PaneComponent {
   @Input() swapWith: string;
   @Input() tab: Tab;
 
-  focused: boolean;
+  focused = false;
   onResized: Function;
-  swapping: boolean;
+  swapping = false;
 
   /** ctor */
   constructor(private root: RootPageComponent,

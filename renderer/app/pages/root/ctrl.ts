@@ -46,7 +46,8 @@ export class RootCtrlComponent {
     this.window$.pipe(take(1))
       .subscribe((window: WindowStateModel) => {
         const win = this.electron.remote.getCurrentWindow();
-        win.setBounds(window.bounds);
+        if (window.bounds)
+          win.setBounds(window.bounds);
       });
   }
 

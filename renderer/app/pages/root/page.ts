@@ -78,7 +78,7 @@ export class RootPageComponent {
 
   // event handlers
 
-  onContextMenu(event: {event: MouseEvent,
+  onContextMenu(event: {event?: MouseEvent,
                         item: {id: string, ix: number}},
                 command: string): void {
     const actions = [];
@@ -103,11 +103,6 @@ export class RootPageComponent {
       case 'paste':
         this.termSvc.write(split.id, this.electron.clipboard.readText());
         break;
-      case 'search':
-        this.editSearch = split.search;
-        this.editSearchID = split.id;
-        this.searchDrawer.open();
-        break;
       case 'bashrc':
         const process = this.electron.process;
         LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
@@ -129,6 +124,11 @@ export class RootPageComponent {
         this.editPrefs = split.prefs;
         this.editPrefsID = split.id;
         this.prefsDrawer.open();
+        break;
+      case 'search':
+        this.editSearch = split.search;
+        this.editSearchID = split.id;
+        this.searchDrawer.open();
         break;
       case 'swapWith':
         this.swapWith = `${id}[${ix}]`;

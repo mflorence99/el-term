@@ -12,16 +12,10 @@ elterm-terminal {
   z-index: 1;
 }
 
-.badge {
-  align-items: center;
-  display: grid;
+.badge,
+.title {
   filter: opacity(50%);
-  font-size: 32px;
-  grid-gap: 16px;
-  grid-template-columns: auto auto;
   position: absolute;
-  right: 16px;
-  top: 24px;
   z-index: 2;
 
   &.focused {
@@ -43,16 +37,19 @@ elterm-terminal {
 
 }
 
-.title {
-  filter: opacity(50%);
-  position: absolute;
+.badge {
+  align-items: center;
+  display: grid;
+  font-size: 32px;
+  grid-gap: 16px;
+  grid-template-columns: auto auto;
   right: 16px;
-  z-index: 2;
+  top: 24px;
+}
 
-  &.focused {
-    filter: opacity(100%);
-  }
-
+.title {
+  right: 16px;
+  top: 4px;
 }
 
 @keyframes wrapping {

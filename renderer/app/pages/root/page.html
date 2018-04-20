@@ -54,7 +54,7 @@
     (execute)="onContextMenu($event, 'reload')"
     [visible]="isDevMode.bind(this)">
     <div>Reload app</div>
-    <div class="accelerator">Ctrl+R</div>
+    <div class="terminal">Ctrl+R</div>
   </ng-template>
 
   <ng-template
@@ -82,12 +82,6 @@
     (execute)="onContextMenu($event, 'paste')"
     [enabled]="isPasteEnabled.bind(this)">
     <div>Paste</div>
-  </ng-template>
-
-  <ng-template
-    contextMenuItem
-    (execute)="onContextMenu($event, 'search')">
-    <div>Search...</div>
   </ng-template>
 
   <ng-template
@@ -128,6 +122,14 @@
     contextMenuItem
     (execute)="onContextMenu($event, 'prefs')">
     <div>Preferences...</div>
+    <div class="terminal">Ctrl+,</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
+    (execute)="onContextMenu($event, 'search')">
+    <div>Search...</div>
+    <div class="terminal">Ctrl+F</div>
   </ng-template>
 
   <ng-template
@@ -171,7 +173,7 @@
     (execute)="onContextMenu($event, 'close')"
     [enabled]="isCloseEnabled.bind(this)">
     <div>Close Pane</div>
-    <div class="accelerator">Ctrl+W</div>
+    <div class="terminal">Ctrl+W</div>
   </ng-template>
 
 </context-menu>

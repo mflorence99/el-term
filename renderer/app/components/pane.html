@@ -1,5 +1,5 @@
 <div
-  [ngClass]="{focused: focused}"
+  [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
   [ngStyle]="{color: tab.color}"
   *ngIf="prefs?.title"
   class="title">

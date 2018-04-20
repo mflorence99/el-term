@@ -47,7 +47,8 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
                          this.dataHandler.bind(this),
                          this.focusHandler.bind(this),
                          this.keyHandler.bind(this),
-                         this.titleHandler.bind(this));
+                         this.titleHandler.bind(this),
+                         this.scrollHandler.bind(this));
   }
 
   ngOnDestroy() {
@@ -85,13 +86,23 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
       win.webContents.reload();
     }
     // NOTE: as little tricky as we have to close on the parent
-    if (event.ctrlKey && event.code === 'KeyW')
+    else if (event.ctrlKey && event.code === 'KeyP')
+      this.root.onContextMenu({item: { id: this.splittable.layout.id,
+                                       ix: this.pane.index } }, 'prefs');
+    else if (event.ctrlKey && event.code === 'KeyF')
+      this.root.onContextMenu({item: { id: this.splittable.layout.id,
+                                       ix: this.pane.index } }, 'search');
+    else if (event.ctrlKey && event.code === 'KeyW')
       this.store.dispatch(new CloseSplit({ id: this.splittable.layout.id,
                                            ix: this.pane.index }));
   }
 
   private titleHandler(title: string): void {
     this.store.dispatch(new SetPrefs({ id: this.sessionID, prefs: { title } }));
+  }
+
+  private scrollHandler(y: number): void {
+    this.termSvc.scrollPos(this.sessionID, y);
   }
 
 }
