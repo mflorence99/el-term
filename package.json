@@ -1,18 +1,25 @@
 {
   "name": "elterm",
   "main": "dist/main.js",
-  "version": "0.0.0",
+  "description": "El terminador",
+  "author": "Mark Florence <mflo999@gmail.com",
+  "version": "1.0.0",
   "license": "MIT",
+  "build": {
+    "appId": "elterm"
+  },
   "scripts": {
-    "ng": "ng",
-    "serve": "ng serve",
     "build": "ng build --prod --aot",
-    "electron": "tsc -p tsconfig.main.json && DEV_MODE=1 electron . --ignore-gpu-blacklist",
+    "dist": "electron-builder --dir",
+    "ng": "ng",
+    "live": "ng build --prod --aot && tsc -p tsconfig.main.json && electron . --ignore-gpu-blacklist",
     "markdown-toc": "markdown-toc",
+    "pack": "electron-builder",
+    "serve": "ng serve",
+    "test": "tsc -p tsconfig.main.json && DEV_MODE=1 electron . --ignore-gpu-blacklist",
     "toc": "markdown-toc -i README.md",
     "tsc": "tsc"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^5.2.0",
     "@angular/cdk": "^5.2.4",
@@ -58,6 +65,7 @@
     "codelyzer": "^4.0.1",
     "devtron": "^1.4.0",
     "electron": "^1.8.4",
+    "electron-builder": "^20.10.0",
     "eslint": "^4.19.0",
     "markdown-toc": "^1.2.0",
     "ts-node": "~4.1.0",

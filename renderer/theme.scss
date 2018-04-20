@@ -10,6 +10,13 @@ $custom-theme: mat-dark-theme($custom-primary, $custom-accent, $custom-warn);
 
 @include angular-material-theme($custom-theme);
 
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/RobotoMono.ttf") format("truetype");
+}
+
 // Bridge from Angular Material variables to CSS variables
 
 ::-webkit-scrollbar {
