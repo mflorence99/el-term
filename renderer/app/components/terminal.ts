@@ -77,7 +77,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   private focusHandler(focused: boolean): void {
     // TODO: see https://github.com/angular/angular/issues/17572
-    // we re violating one-way data flow and a child (this) changes the state
+    // we are violating one-way data flow and a child (this) changes the state
     // of a parent -- we used to code an EventEmitter here but given that
     // we're off-track anyway, let's just hack in the change
     nextTick(() => this.pane.focused = focused);
