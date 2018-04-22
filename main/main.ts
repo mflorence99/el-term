@@ -35,6 +35,7 @@ app.on('ready', () => {
     }));
   }
   theWindow.setMenu(null);
+  // event handlers
   const sendBounds = () =>
     theWindow.webContents.send('bounds', theWindow.getBounds());
   theWindow.on('move', sendBounds);

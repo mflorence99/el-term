@@ -58,8 +58,4 @@ export class PaneComponent {
     this.swapping = false;
   }
 
-  onFocus(focused: boolean) {
-    this.focused = focused;
-  }
-
 }

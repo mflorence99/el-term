@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { CloseSplit, LayoutPrefs, LayoutSearch } from '../state/layout';
 
 import { ElectronService } from 'ngx-electron';
@@ -8,6 +8,7 @@ import { SetPrefs } from '../state/layout';
 import { SplittableComponent } from '../components/splittable';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
+import { nextTick } from 'ellib';
 
 /**
  * Terminal component
@@ -25,8 +26,6 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   @Input() prefs = { } as LayoutPrefs;
   @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
-
-  @Output() focused = new EventEmitter<boolean>();
 
   @ViewChild('xterm') xterm: ElementRef;
 
@@ -77,11 +76,15 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   }
 
   private focusHandler(focused: boolean): void {
-    this.focused.emit(focused);
+    // TODO: see https://github.com/angular/angular/issues/17572
+    // we re violating one-way data flow and a child (this) changes the state
+    // of a parent -- we used to code an EventEmitter here but given that
+    // we're off-track anyway, let's just hack in the change
+    nextTick(() => this.pane.focused = focused);
   }
 
   private keyHandler(event: KeyboardEvent): void {
-    if (this.root.isDevMode() && event.ctrlKey && event.code === 'KeyR') {
+    if (event.ctrlKey && event.code === 'KeyR') {
       const win = this.electron.remote.getCurrentWindow();
       win.webContents.reload();
     }

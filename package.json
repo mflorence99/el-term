@@ -2,19 +2,20 @@
   "name": "elterm",
   "main": "dist/main.js",
   "description": "El terminador",
-  "author": "Mark Florence <mflo999@gmail.com",
+  "author": "Mark Florence <mflo999@gmail.com>",
   "version": "1.0.0",
   "license": "MIT",
   "build": {
     "appId": "elterm"
   },
   "scripts": {
-    "build": "ng build --prod --aot",
+    "build": "rimraf dist && ng build --prod --aot",
     "dist": "electron-builder --dir",
     "ng": "ng",
-    "live": "ng build --prod --aot && tsc -p tsconfig.main.json && electron . --ignore-gpu-blacklist",
+    "live": "rimraf dist && ng build --prod --aot && tsc -p tsconfig.main.json && electron . --ignore-gpu-blacklist",
     "markdown-toc": "markdown-toc",
-    "pack": "electron-builder",
+    "pack": "rimraf dist && ng build --prod --aot && tsc -p tsconfig.main.json && electron-builder",
+    "rimraf": "rimraf",
     "serve": "ng serve",
     "test": "tsc -p tsconfig.main.json && DEV_MODE=1 electron . --ignore-gpu-blacklist",
     "toc": "markdown-toc -i README.md",
@@ -68,6 +69,7 @@
     "electron-builder": "^20.10.0",
     "eslint": "^4.19.0",
     "markdown-toc": "^1.2.0",
+    "rimraf": "^2.6.2",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",
     "typescript": "~2.5.3"

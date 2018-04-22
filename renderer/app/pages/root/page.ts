@@ -61,11 +61,6 @@ export class RootPageComponent {
     return this.termSvc.hasSelection(layout.splits[item.ix].id);
   }
 
-  /** Are dev tools visible? */
-  isDevMode(): boolean {
-    return this.electron.process.env['DEV_MODE'] === '1';
-  }
-
   /** Is the paste menu enabled? */
   isPasteEnabled(item: {id: string, ix: number}): boolean {
     return !!this.electron.clipboard.readText();

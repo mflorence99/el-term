@@ -51,23 +51,20 @@
 
   <ng-template
     contextMenuItem
-    (execute)="onContextMenu($event, 'reload')"
-    [visible]="isDevMode.bind(this)">
+    (execute)="onContextMenu($event, 'reload')">
     <div>Reload app</div>
     <div class="terminal">Ctrl+R</div>
   </ng-template>
 
   <ng-template
     contextMenuItem
-    (execute)="onContextMenu($event, 'dev-tools')"
-    [visible]="isDevMode.bind(this)">
+    (execute)="onContextMenu($event, 'dev-tools')">
     <div>Open dev tools...</div>
   </ng-template>
 
   <ng-template
     contextMenuItem
-    divider="true"
-    [visible]="isDevMode.bind(this)">
+    divider="true">
   </ng-template>
 
   <ng-template
@@ -122,7 +119,7 @@
     contextMenuItem
     (execute)="onContextMenu($event, 'prefs')">
     <div>Preferences...</div>
-    <div class="terminal">Ctrl+,</div>
+    <div class="terminal">Ctrl+P</div>
   </ng-template>
 
   <ng-template
