@@ -1,8 +1,17 @@
 # El terminador
 
-EL-Term is an Electron-based Terminal Emulator. Because I'm sure I'll be the only user, I've taken the liberty of dubbing it _El terminador_. I built it primarily because I didn't like any of the emulators I saw when I moved from using my Mac for development to Linux. None I thought were as complete as iTerm2 and even that venerable too, with its layers of profile-setting dialogs, can be difficult to set up.
+EL-Term is an Electron-based Terminal Emulator. Because I'm sure I'll be the only user, I've taken the liberty of dubbing it _El terminador_. I built it primarily because I didn't like any of the emulators I saw when I moved from using my Mac for development to Linux. None I thought were as complete as [iTerm2](https://www.iterm2.com/) and even that venerable tool, with its layers of profile-setting dialogs, can be difficult to set up.
 
 <!-- toc -->
+
+- [Highlights](#highlights)
+- [Technology Stack](#technology-stack)
+- [How to Run in Development Mode](#how-to-run-in-development-mode)
+- [Customization](#customization)
+  * [Customizing Tabs](#customizing-tabs)
+  * [Customizing Splits](#customizing-splits)
+- [Search and Highlight](#search-and-highlight)
+- [Tips](#tips)
 
 <!-- tocstop -->
 
@@ -16,6 +25,20 @@ EL-Term is an Electron-based Terminal Emulator. Because I'm sure I'll be the onl
 * [Powerline](https://wiki.archlinux.org/index.php/Powerline)-ready, built-in [Roboto Mono](https://github.com/powerline) font
 * All customizations (splits, tabs and so on) are automatically persisted
 * Looks great on a 4k monitor!
+
+## Technology Stack
+
+First of all, none of what I attempted to do would amount to anything without the support of [xterm.js](https://xtermjs.org/) and [node-pty](https://github.com/Tyriar/node-pty). These two first-class projects fit each other hand-in-glove. In addition, I have relied heavily on one of the best tech stacks currently available:
+
+* [Electron](https://electronjs.org/) to build a cross-platform desktop app with [TypeScript](http://www.typescriptlang.org/), HTML and CSS.
+* [Angular](https://angular.io/docs) as a framework for SPAs.
+* Thorsten Hans' [ngx-electron](https://github.com/ThorstenHans/ngx-electron) to expose Electron's API to Angular.
+* The context menu is driven by the impressive [ngx-contextmenu](https://github.com/isaacplmann/ngx-contextmenu).
+* [Angular Material](https://material.angular.io/) for UI components.
+* [Font Awesome](https://fontawesome.com)'s awesome library of icons.
+* The amazing [ngxs](https://ngxs.gitbooks.io/ngxs/) state management pattern.
+* [angular-split](https://bertrandg.github.io/angular-split/#/) handles all the details of the arbitrary splits that _El terminador_ supports.
+* [angular4-drag-drop](https://bitbucket.org/IpponMattRitter/angular4-drag-drop) allows tabs to be reordered.
 
 ## How to Run in Development Mode
 
@@ -68,4 +91,5 @@ Right-click the split to be searched and select `Search...`. The search string i
 ## Tips
 
 * The `Broadcast...` facility is very handy for dealing with multiple sessions at once.
-* `Swap with...` is invaluable when rearranging a complex layout of splits
+* `Swap with...` is invaluable when rearranging a complex layout of splits.
+* To reorder tabs, click and drag the tab's label to its new position.
