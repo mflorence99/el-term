@@ -111,6 +111,21 @@ export class TerminalService {
       pp.removeChild(session.element);
       console.log(`%cdisconnect('${sessionID}')`, `color: #c2185b`);
     }
+    if (session.pty) {
+      session.pty.removeListener('data', session.pty2term);
+      session.pty2term = null;
+    }
+    if (session.term) {
+      session.term.off('data', session.term2pty);
+      session.term2pty = null;
+      // unwire handlers
+      Object.keys(session.handlers)
+        .filter(evt => evt !== 'data')
+        .forEach(evt => {
+          const handler = session.handlers[evt];
+          session.term.off(evt, handler);
+        });
+    }
   }
 
   /** Find the next occurrence */
@@ -173,7 +188,7 @@ export class TerminalService {
         .filter(evt => evt !== 'data')
         .forEach(evt => {
           const handler = session.handlers[evt];
-          session.term.on(evt, handler);
+          session.term.off(evt, handler);
         });
       session.term.destroy();
     }
