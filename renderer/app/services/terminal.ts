@@ -180,20 +180,10 @@ export class TerminalService {
     const session = this.get(sessionID);
     if (session.pty) {
       this.electron.ipcRenderer.send('kill', session.pty.pid);
-      session.pty.removeListener('data', session.pty2term);
       session.pty.destroy();
     }
-    if (session.term) {
-      session.term.off('data', session.term2pty);
-      // unwire handlers
-      Object.keys(session.handlers)
-        .filter(evt => evt !== 'data')
-        .forEach(evt => {
-          const handler = session.handlers[evt];
-          session.term.off(evt, handler);
-        });
+    if (session.term)
       session.term.destroy();
-    }
     this.delete(sessionID);
     console.log(`%ckill('${sessionID}')`, `color: #3367d6`);
   }
@@ -388,7 +378,7 @@ export class TerminalService {
       // hidden factor
       const dims = (<any>session.term).renderer.dimensions;
       session.cols = Math.max(Math.round((width - (2 * padding)) / dims.actualCellWidth), 1);
-      session.rows = Math.max(Math.round((height - (2 * padding)) / dims.actualCellHeight), 1) - 3;
+      session.rows = Math.max(Math.round((height - (2 * padding)) / dims.actualCellHeight), 1);
       // finally ready to set rows, cols
       session.term.resize(session.cols, session.rows);
       session.pty.resize(session.cols, session.rows);
