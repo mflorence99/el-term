@@ -33,7 +33,7 @@ export class TerminalService {
     const session = this.get(sessionID);
     if (session.term)
       session.term.clear();
-    if (session.handlers.title)
+    if (session.handlers && session.handlers.title)
       session.handlers.title(null);
   }
 
@@ -305,7 +305,8 @@ export class TerminalService {
       session.term.element.style.padding = `${padding}px`;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).fit();
-      (<any>session.term).webLinksInit();
+      // TODO: temporarily disabled -- causes exception on clear
+      // (<any>session.term).webLinksInit();
       session.element = element;
       console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
     }
