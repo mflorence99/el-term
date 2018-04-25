@@ -33,6 +33,8 @@ export class TerminalService {
     const session = this.get(sessionID);
     if (session.term)
       session.term.clear();
+    if (session.handlers.title)
+      session.handlers.title(null);
   }
 
   /** CTRL+C a session */
