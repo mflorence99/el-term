@@ -58,7 +58,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   private dataHandler(data: string): string {
     const pfx = '\u001B[30;43m';
-    const sfx = '\u001B[27m';
+    const sfx = '\u001B[0m';
     if (this.search && this.search.str && (this.search.str.length > 0)) {
       const highlighted = `${pfx}${this.search.str}${sfx}`;
       data = data.replace(RegExp(this.search.str, 'gi'), highlighted);
