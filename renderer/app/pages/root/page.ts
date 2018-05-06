@@ -86,27 +86,10 @@ export class RootPageComponent {
     this.termSvc.focus(split.id);
     // act on command
     switch (command) {
-      case 'reload':
-        win.webContents.reload();
-        break;
-      case 'dev-tools':
-        win.webContents.openDevTools();
-        break;
-      case 'copy':
-        this.electron.clipboard.writeText(this.termSvc.getSelection(split.id));
-        break;
-      case 'paste':
-        this.termSvc.write(split.id, this.electron.clipboard.readText());
-        break;
       case 'bashrc':
         const process = this.electron.process;
         LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
           this.termSvc.writeln(split.id, `source ${process.env['HOME']}/.bashrc`);
-        });
-        break;
-      case 'ctrl+c':
-        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
-          this.termSvc.ctrl_c(split.id);
         });
         break;
       case 'clear':
@@ -115,10 +98,41 @@ export class RootPageComponent {
           this.termSvc.clear(split.id);
         });
         break;
+      case 'close':
+        actions.push(new CloseSplit({ id, ix }));
+        break;
+      case 'copy':
+        this.electron.clipboard.writeText(this.termSvc.getSelection(split.id));
+        break;
+      case 'ctrl+c':
+        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
+          this.termSvc.ctrl_c(split.id);
+        });
+        break;
+      case 'dev-tools':
+        win.webContents.openDevTools();
+        break;
+      case 'exit':
+        LayoutState.visitSplits(this.splittable.layout, (split: Layout) => {
+          this.termSvc.writeln(split.id, 'exit');
+        });
+        break;
+      case 'horizontal-':
+        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: true }));
+        break;
+      case 'horizontal+':
+        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: false }));
+        break;
+      case 'paste':
+        this.termSvc.write(split.id, this.electron.clipboard.readText());
+        break;
       case 'prefs':
         this.editPrefs = split.prefs;
         this.editPrefsID = split.id;
         this.prefsDrawer.open();
+        break;
+      case 'reload':
+        win.webContents.reload();
         break;
       case 'search':
         this.editSearch = split.search;
@@ -133,15 +147,6 @@ export class RootPageComponent {
         break;
       case 'vertical+':
         actions.push(new MakeSplit({ id, ix, direction: 'vertical', before: false }));
-        break;
-      case 'horizontal-':
-        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: true }));
-        break;
-      case 'horizontal+':
-        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: false }));
-        break;
-      case 'close':
-        actions.push(new CloseSplit({ id, ix }));
         break;
     }
     // dispatch action

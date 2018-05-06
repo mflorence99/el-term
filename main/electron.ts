@@ -1,15 +1,14 @@
 import * as path from 'path';
 import * as url from 'url';
 
-import { BrowserWindow, app, ipcMain } from 'electron';
-
 /**
  * Electron event dispatcher
  */
 
+const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = process.env['DEV_MODE'] === '1';
 const pids = [];
-let theWindow: BrowserWindow;
+let theWindow = null;
 
 app.on('ready', () => {
   theWindow = new BrowserWindow({
@@ -34,6 +33,7 @@ app.on('ready', () => {
       slashes: true
     }));
   }
+  theWindow.webContents.openDevTools();
   theWindow.setMenu(null);
   // event handlers
   const sendBounds = () =>

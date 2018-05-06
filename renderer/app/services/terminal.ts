@@ -291,6 +291,7 @@ export class TerminalService {
         // NOTE: I think there's a bug where this object is NOT r/o!
         cols: initialCols,
         rows: initialRows,
+        scrollback: 10000,
         fontFamily: 'Roboto Mono',
         fontSize: 12,
         theme: {

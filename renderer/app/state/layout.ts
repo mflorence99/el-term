@@ -7,39 +7,48 @@ import { nextTick } from 'ellib';
 /** NOTE: actions must come first because of AST */
 
 export class CloseSplit {
+  static readonly type = '[Layout] close split';
   constructor(public readonly payload: {id: string, ix: number}) { }
 }
 
 export class MakeSplit {
+  static readonly type = '[Layout] make split';
   constructor(public readonly payload:
     {id: string, ix: number, direction: 'horizontal' | 'vertical', before: boolean}) { }
 }
 
 export class NewLayout {
+  static readonly type = '[Layout] new layout';
   constructor(public readonly payload: string) { }
 }
 
 export class RemoveLayout {
+  static readonly type = '[Layout] remove layout';
   constructor(public readonly payload: string) { }
 }
 
 export class SetPrefs {
+  static readonly type = '[Layout] set prefs';
   constructor(public readonly payload: {id: string, prefs: LayoutPrefs}) { }
 }
 
 export class SetSearch {
+  static readonly type = '[Layout] set search';
   constructor(public readonly payload: {id: string, search: LayoutSearch}) { }
 }
 
 export class SetSearchWrap {
+  static readonly type = '[Layout] set search wrap';
   constructor(public readonly payload: {id: string, wrap: boolean}) { }
 }
 
 export class SwapWith {
+  static readonly type = '[Layout] swap with';
   constructor(public readonly payload: {id: string, with: string}) { }
 }
 
 export class UpdateSplitSizes {
+  static readonly type = '[Layout] update split sizes';
   constructor(public readonly payload: {id: string, sizes: number[]}) { }
 }
 

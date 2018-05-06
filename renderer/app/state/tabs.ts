@@ -6,26 +6,32 @@ import { UUID } from 'angular2-uuid';
 /** NOTE: actions must come first because of AST */
 
 export class MoveTab {
+  static readonly type = '[Tabs] move tab';
   constructor(public readonly payload: { tab, ix }) { }
 }
 
 export class NewTab {
+  static readonly type = '[Tabs] new tab';
   constructor(public readonly payload?: any) { }
 }
 
 export class RemoveTab {
+  static readonly type = '[Tabs] remove tab';
   constructor(public readonly payload: Tab) { }
 }
 
 export class SelectPermanentTab {
+  static readonly type = '[Tabs] select permanent tab';
   constructor(public readonly payload?: any) { }
 }
 
 export class SelectTab {
+  static readonly type = '[Tabs] select tab';
   constructor(public readonly payload: Tab) { }
 }
 
 export class UpdateTab {
+  static readonly type = '[Tabs] update tab';
   constructor(public readonly payload: any) { }
 }
 

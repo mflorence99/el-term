@@ -5,7 +5,7 @@ import { WindowState, WindowStateModel } from '../../state/window';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { ElectronService } from 'ngx-electron';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 
 /**

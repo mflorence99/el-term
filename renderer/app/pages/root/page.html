@@ -106,6 +106,12 @@
 
   <ng-template
     contextMenuItem
+    (execute)="onContextMenu($event, 'exit')">
+    <div class="terminal">exit</div>
+  </ng-template>
+
+  <ng-template
+    contextMenuItem
     (execute)="onContextMenu($event, 'bashrc')">
     <div class="terminal">source ~/.bashrc</div>
   </ng-template>
