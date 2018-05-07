@@ -42,20 +42,52 @@ First of all, none of what I attempted to do would amount to anything without th
 
 ## How to Run in Development Mode
 
-> This is the only way for now, until I package EL-3270 properly as a standalone desktop app -- which is after all the point of Electron.
-
 One time only, you'll need to grab the code:
 
-```
+```sh
 git clone https://github.com/mflorence99/el-term.git
 cd el-term
 npm install
 ```
 
-Next, start the app.
+Then in one session start the Angular code:
 
+```sh
+npm run serve
 ```
-npm run live
+
+And in another start the Electron app:
+
+```sh
+npm run test
+```
+
+## How to Run in Production Mode
+
+> NOTE: this currently only works for Ubuntu / Debian.
+
+> I need to host the installation files.
+
+One time only, you'll need to grab the code:
+
+```sh
+git clone https://github.com/mflorence99/el-term.git
+cd el-term
+npm install
+```
+
+Then build the installation files:
+
+```sh
+npm run package
+npm run deb64
+```
+
+Now you can install _El terminador_:
+
+```sh
+cd build/installers/
+dpkg elterm_1.0.0_amd64.deb
 ```
 
 ## Customization
