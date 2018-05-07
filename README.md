@@ -42,7 +42,7 @@ First of all, none of what I attempted to do would amount to anything without th
 
 ## How to Run in Development Mode
 
-One time only, you'll need to grab the code:
+One time only, you'll need to grab the code.
 
 ```sh
 git clone https://github.com/mflorence99/el-term.git
@@ -50,13 +50,13 @@ cd el-term
 npm install
 ```
 
-Then in one session start the Angular code:
+Next, start the dev server for the Angular client. This way, hot reload of the client is supported.
 
 ```sh
 npm run serve
 ```
 
-And in another start the Electron app:
+Finally, in another session, start the Electron app itself.
 
 ```sh
 npm run test
@@ -68,7 +68,7 @@ npm run test
 
 > I need to host the installation files.
 
-One time only, you'll need to grab the code:
+One time only, you'll need to grab the code.
 
 ```sh
 git clone https://github.com/mflorence99/el-term.git
@@ -76,14 +76,14 @@ cd el-term
 npm install
 ```
 
-Then build the installation files:
+Then build the installation files.
 
 ```sh
 npm run package
 npm run deb64
 ```
 
-Now you can install _El terminador_:
+Now you can install _El terminador_.
 
 ```sh
 cd build/installers/
