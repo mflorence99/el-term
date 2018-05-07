@@ -7,6 +7,7 @@ EL-Term is an Electron-based Terminal Emulator. Because I'm sure I'll be the onl
 - [Highlights](#highlights)
 - [Technology Stack](#technology-stack)
 - [How to Run in Development Mode](#how-to-run-in-development-mode)
+- [How to Run in Production Mode](#how-to-run-in-production-mode)
 - [Customization](#customization)
   * [Customizing Tabs](#customizing-tabs)
   * [Customizing Splits](#customizing-splits)
