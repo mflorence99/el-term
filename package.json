@@ -40,7 +40,7 @@
     "core-js": "2",
     "ellib": "latest",
     "hammerjs": "2",
-    "ngx-contextmenu": "4",
+    "ngx-contextmenu": "5",
     "ngx-electron": "1",
     "node-pty": "^0.7.4",
     "ps-tree": "1",
