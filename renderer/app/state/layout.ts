@@ -75,7 +75,7 @@ export interface LayoutSearch {
 }
 
 export interface LayoutStateModel {
-  [s: string]: Layout;
+  [tab: string]: Layout;
 }
 
 @State<LayoutStateModel>({
@@ -108,7 +108,7 @@ export interface LayoutStateModel {
   static findSplitByID(model: LayoutStateModel,
                        id: string): Layout {
     for (const key of Object.keys(model)) {
-      const layout = this.findSplitByIDImpl(model[key], id);
+      const layout = LayoutState.findSplitByIDImpl(model[key], id);
       if (layout)
         return layout;
     }
@@ -122,7 +122,7 @@ export interface LayoutStateModel {
       return layout;
     if (layout.splits && layout.splits.length) {
       for (const inner of layout.splits) {
-        const split = this.findSplitByIDImpl(inner, id);
+        const split = LayoutState.findSplitByIDImpl(inner, id);
         if (split)
           return split;
       }
@@ -136,7 +136,7 @@ export interface LayoutStateModel {
     if (layout.splits && layout.splits.length) {
       for (const inner of layout.splits) {
         visitor(inner);
-        this.visitSplits(inner, visitor);
+        LayoutState.visitSplits(inner, visitor);
       }
     }
   }
@@ -169,7 +169,7 @@ export interface LayoutStateModel {
         delete split.splits;
       }
     }
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(MakeSplit)
@@ -206,7 +206,7 @@ export interface LayoutStateModel {
         }
       }
     }
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(NewLayout)
@@ -214,7 +214,7 @@ export interface LayoutStateModel {
             { payload }: NewLayout) {
     const updated = getState();
     updated[payload] = LayoutState.defaultLayout();
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(RemoveLayout)
@@ -227,7 +227,7 @@ export interface LayoutStateModel {
       nextTick(() => this.termSvc.kill(splat.id));
     });
     delete updated[payload];
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SetPrefs)
@@ -240,7 +240,7 @@ export interface LayoutStateModel {
       split.prefs = split.prefs || { };
       Object.assign(split.prefs, payload.prefs);
     }
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SetSearch)
@@ -250,7 +250,7 @@ export interface LayoutStateModel {
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split)
       split.search = { ...payload.search };
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SetSearchWrap)
@@ -260,7 +260,7 @@ export interface LayoutStateModel {
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split)
       split.search.wrap = payload.wrap;
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SwapWith)
@@ -285,7 +285,7 @@ export interface LayoutStateModel {
       q.search = search;
       // swap the sessions
       this.termSvc.swap(p.id, q.id);
-      setState({...updated});
+      setState({ ...updated });
     }
   }
 
@@ -296,7 +296,7 @@ export interface LayoutStateModel {
     const split = LayoutState.findSplitByID(updated, payload.id);
     if (split)
       payload.sizes.forEach((size, ix) => split.splits[ix].size = size);
-    setState({...updated});
+    setState({ ...updated });
   }
 
 }

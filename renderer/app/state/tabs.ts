@@ -78,7 +78,7 @@ export interface TabsStateModel {
     const ix = TabsState.findTabIndexByID(updated, payload.tab.id);
     updated.tabs.splice(ix, 1);
     updated.tabs.splice(payload.ix, 0, payload.tab);
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(NewTab)
@@ -88,7 +88,7 @@ export interface TabsStateModel {
     const tab = new Tab('More Sessions');
     updated.tabs.push(tab);
     dispatch(new NewLayout(tab.id));
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(RemoveTab)
@@ -98,7 +98,7 @@ export interface TabsStateModel {
     const ix = TabsState.findTabIndexByID(updated, payload.id);
     updated.tabs.splice(ix, 1);
     dispatch(new RemoveLayout(payload.id));
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SelectPermanentTab)
@@ -106,7 +106,7 @@ export interface TabsStateModel {
                      { payload }: SelectPermanentTab) {
     const updated = getState();
     updated.tabs.forEach(tab => tab.selected = tab.permanent);
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(SelectTab)
@@ -114,7 +114,7 @@ export interface TabsStateModel {
             { payload }: SelectTab) {
     const updated = getState();
     updated.tabs.forEach(tab => tab.selected = (tab.id === payload.id));
-    setState({...updated});
+    setState({ ...updated });
   }
 
   @Action(UpdateTab)
@@ -123,7 +123,7 @@ export interface TabsStateModel {
     const updated = getState();
     const ix = TabsState.findTabIndexByID(updated, payload.id);
     Object.assign(updated.tabs[ix], payload);
-    setState({...updated});
+    setState({ ...updated });
   }
 
 }
