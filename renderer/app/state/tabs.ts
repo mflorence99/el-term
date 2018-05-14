@@ -7,7 +7,7 @@ import { UUID } from 'angular2-uuid';
 
 export class MoveTab {
   static readonly type = '[Tabs] move tab';
-  constructor(public readonly payload: { tab, ix }) { }
+  constructor(public readonly payload: { tab: Tab, ix: number }) { }
 }
 
 export class NewTab {
