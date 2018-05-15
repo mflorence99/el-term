@@ -46,7 +46,7 @@ export class TabComponent extends LifecycleComponent {
   }
 
   onClear(nm: string) {
-    this.tabForm.patchValue({ [nm]: '' }, {emitEvent: false});
+    this.tabForm.patchValue({ [nm]: '' }, { emitEvent: false });
   }
 
   onRemove(areYouSure: boolean) {
@@ -62,7 +62,7 @@ export class TabComponent extends LifecycleComponent {
   }
 
   onSubmit() {
-    this.store.dispatch(new UpdateTab({ id: this.tab.id, ...this.tabForm.value}));
+    this.store.dispatch(new UpdateTab({ id: this.tab.id, ...this.tabForm.value }));
     this.onCancel();
   }
 
