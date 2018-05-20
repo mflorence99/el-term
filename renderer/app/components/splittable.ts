@@ -29,10 +29,11 @@ export class SplittableComponent {
 
   /** ctor */
   constructor(private store: Store) {
-    this.updateSplitSizes = debounce(this._updateSplitSize, 500);
+    this.updateSplitSizes = debounce(this._updateSplitSizes, 500);
   }
 
-  /** Whenever the split size changes */
+  // event handlers
+
   onSplitSizeChange(event: {gutterNum: number,
                             sizes: number[]}): void {
     this.updateSplitSizes(this.layout.id, event.sizes);
@@ -40,8 +41,8 @@ export class SplittableComponent {
 
   // private methods
 
-  private _updateSplitSize(id: string,
-                           sizes: number[]): void {
+  private _updateSplitSizes(id: string,
+                            sizes: number[]): void {
     this.store.dispatch(new UpdateSplitSizes({id, sizes}));
   }
 
