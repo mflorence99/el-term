@@ -5,6 +5,7 @@ import { RootPageComponent } from '../pages/root/page';
 import { Store } from '@ngxs/store';
 import { Tab } from '../state/tabs';
 import { TerminalService } from '../services/terminal';
+import { config } from '../config';
 import { debounce } from 'ellib';
 
 /**
@@ -37,7 +38,7 @@ export class PaneComponent {
               private termSvc: TerminalService) {
     this.onResized = debounce((event: { newWidth, newHeight }) => {
       this.termSvc.resize(this.sessionID, { width: event.newWidth, height: event.newHeight });
-    }, 250);
+    }, config.resizePaneThrottle);
   }
 
   // listeners

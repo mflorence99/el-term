@@ -9,6 +9,7 @@ import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
+import { config } from '../../config';
 import { debounce } from 'ellib';
 
 /**
@@ -46,7 +47,7 @@ export class RootPageComponent {
               private store: Store) {
     this.electron.ipcRenderer.on('bounds', debounce((event, bounds) => {
       this.store.dispatch(new SetBounds(bounds));
-    }, 250));
+    }, config.setBoundsThrottle));
   }
 
   /** Is the close menu enabled? */

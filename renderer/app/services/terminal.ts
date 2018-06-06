@@ -5,11 +5,8 @@ import { ElectronService } from 'ngx-electron';
 import { Injectable } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
 import { Terminal } from 'xterm';
+import { config } from '../config';
 import { nextTick } from 'ellib';
-
-const initialCols = 80;
-const initialRows = 24;
-const padding = 16;
 
 /**
  * Encapsulates xterm <==> node-pty communication
@@ -292,21 +289,21 @@ export class TerminalService {
     if (!session.term) {
       const options = {
         // NOTE: I think there's a bug where this object is NOT r/o!
-        cols: initialCols,
-        rows: initialRows,
-        scrollback: 10000,
-        fontFamily: 'Roboto Mono',
-        fontSize: 12,
+        cols: config.terminalWindowCols,
+        rows: config.terminalWindowRows,
+        scrollback: config.terminalWindowScroll,
+        fontFamily: config.terminalWindowFontFamily,
+        fontSize: config.terminalWindowFontSize,
         theme: {
-          background: '#212121', // var(--mat-grey-900)
-          foreground: '#f5f5f5'  // var(--mat-grey-100)
+          background: config.terminalWindowBg,
+          foreground: config.terminalWindowFg
         }
       };
       session.term = new Terminal(options);
       // connect to DOM
       session.term.open(element);
       session.term.focus();
-      session.term.element.style.padding = `${padding}px`;
+      session.term.element.style.padding = `${config.terminalWindowPadding}px`;
       // NOTE: see https://github.com/xtermjs/xterm.js/#importing
       (<any>session.term).fit();
       // TODO: temporarily disabled -- causes exception on clear
@@ -337,11 +334,11 @@ export class TerminalService {
       // launch node-pty over real terminal
       const shell = process.env[this.os_.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
       session.pty = this.nodePty_.spawn(shell, [], {
-        cols: initialCols,
+        cols: config.terminalWindowCols,
         cwd: cwd,
         env: process.env,
         name: 'xterm-256color',
-        rows: initialRows
+        rows: config.terminalWindowRows
       });
       this.electron.ipcRenderer.send('connect', session.pty.pid);
       console.log(`%cENV %c${JSON.stringify(process.env)}`, 'color: black', 'color: gray');
@@ -382,6 +379,7 @@ export class TerminalService {
       // especially for height/rows -- pty seems to have some row calculation
       // hidden factor
       const dims = (<any>session.term).renderer.dimensions;
+      const padding = config.terminalWindowPadding;
       session.cols = Math.max(Math.round((width - (2 * padding)) / dims.actualCellWidth), 1);
       session.rows = Math.max(Math.round((height - (2 * padding)) / dims.actualCellHeight), 1);
       // finally ready to set rows, cols
