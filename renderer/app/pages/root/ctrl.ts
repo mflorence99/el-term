@@ -36,7 +36,7 @@ export class RootCtrlComponent {
   layout$: Observable<Layout> = this.tab$.pipe(
     switchMap((tab: Tab) => {
       return this.layouts$.pipe(
-        map((model: LayoutStateModel) => model[tab.id])
+        map((model: LayoutStateModel) => tab? model[tab.id] : null)
       );
     })
   );

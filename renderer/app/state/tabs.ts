@@ -99,6 +99,8 @@ export interface TabsStateModel {
     updated.tabs.splice(ix, 1);
     dispatch(new RemoveLayout(payload.id));
     setState({ ...updated });
+    if (payload.selected)
+      dispatch(new SelectPermanentTab());
   }
 
   @Action(SelectPermanentTab)

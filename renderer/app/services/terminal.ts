@@ -1,3 +1,6 @@
+import * as os from 'os';
+import * as psTree from 'ps-tree';
+
 import { ElectronService } from 'ngx-electron';
 import { Injectable } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
@@ -17,15 +20,15 @@ export class TerminalService {
 
   private static sessions: { [sessionID: string]: Session } = { };
 
-  private nodePty: { spawn: Function };
-  private os: { platform: Function };
-  private psTree: Function;
+  private nodePty_: { spawn: (shell: string, args: string[], opts: { }) => void };
+  private os_: typeof os;
+  private psTree_: typeof psTree;
 
   /** ctor */
   constructor(private electron: ElectronService) {
-    this.nodePty = this.electron.remote.require('node-pty');
-    this.os = this.electron.remote.require('os');
-    this.psTree = this.electron.remote.require('ps-tree');
+    this.nodePty_ = this.electron.remote.require('node-pty');
+    this.os_ = this.electron.remote.require('os');
+    this.psTree_ = this.electron.remote.require('ps-tree');
   }
 
   /** Clear a session */
@@ -42,9 +45,9 @@ export class TerminalService {
     const session = this.get(sessionID);
     if (session.pty) {
       const process = this.electron.process;
-      this.psTree(session.pty.pid, (err, children) => {
+      this.psTree_(session.pty.pid, (err, children) => {
         children.forEach(child => {
-          process.kill(child.PID, 'SIGINT');
+          process.kill(Number(child.PID), 'SIGINT');
           console.log(`%cctrl_c('${sessionID}') %c${child.COMMAND}`, `color: #d32f2f`, `color: black`);
         });
       });
@@ -332,8 +335,8 @@ export class TerminalService {
           .replace(/^\$HOME/, home);
       }
       // launch node-pty over real terminal
-      const shell = process.env[this.os.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
-      session.pty = this.nodePty.spawn(shell, [], {
+      const shell = process.env[this.os_.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
+      session.pty = this.nodePty_.spawn(shell, [], {
         cols: initialCols,
         cwd: cwd,
         env: process.env,

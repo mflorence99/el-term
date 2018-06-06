@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { MoveTab, NewTab, Tab, TabsStateModel } from '../state/tabs';
-import { RemoveTab, SelectPermanentTab, SelectTab } from '../state/tabs';
+import { RemoveTab, SelectTab } from '../state/tabs';
 
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { RootPageComponent } from '../pages/root/page';
@@ -48,7 +48,7 @@ export class TabsComponent {
         // NOTE: we need to make sure a tab is selected after we delete
         // one that itself may have been selected -- we also delay removal
         // so this component can clean up first
-        nextTick(() => this.store.dispatch([new RemoveTab(tab), new SelectPermanentTab()]));
+        nextTick(() => this.store.dispatch(new RemoveTab(tab)));
         break;
     }
   }
