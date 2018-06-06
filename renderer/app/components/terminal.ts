@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { CloseSplit, LayoutPrefs, LayoutSearch } from '../state/layout';
 
 import { ElectronService } from 'ngx-electron';
@@ -15,7 +15,7 @@ import { nextTick } from 'ellib';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'elterm-terminal',
   templateUrl: 'terminal.html',
   styleUrls: ['terminal.scss']
@@ -35,7 +35,8 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
               private root: RootPageComponent,
               private splittable: SplittableComponent,
               private store: Store,
-              private termSvc: TerminalService) { }
+              private termSvc: TerminalService,
+              private zone: NgZone) { }
 
   // lifecycle methods
 
@@ -80,28 +81,34 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   }
 
   private keyHandler(event: KeyboardEvent): void {
-    if (event.ctrlKey && event.code === 'KeyR') {
-      const win = this.electron.remote.getCurrentWindow();
-      win.webContents.reload();
-    }
-    // NOTE: as little tricky as we have to close on the parent
-    else if (event.ctrlKey && event.code === 'KeyP')
-      this.root.onContextMenu({item: { id: this.splittable.layout.id,
-                                       ix: this.pane.index } }, 'prefs');
-    else if (event.ctrlKey && event.code === 'KeyF')
-      this.root.onContextMenu({item: { id: this.splittable.layout.id,
-                                       ix: this.pane.index } }, 'search');
-    else if (event.ctrlKey && event.code === 'KeyW')
-      this.store.dispatch(new CloseSplit({ id: this.splittable.layout.id,
-                                           ix: this.pane.index }));
+    this.zone.run(() => {
+      if (event.ctrlKey && event.code === 'KeyR') {
+        const win = this.electron.remote.getCurrentWindow();
+        win.webContents.reload();
+      }
+      // NOTE: as little tricky as we have to close on the parent
+      else if (event.ctrlKey && event.code === 'KeyP')
+        this.root.onExecute({item: { id: this.splittable.layout.id,
+                                         ix: this.pane.index } }, 'prefs');
+      else if (event.ctrlKey && event.code === 'KeyF')
+        this.root.onExecute({item: { id: this.splittable.layout.id,
+                                         ix: this.pane.index } }, 'search');
+      else if (event.ctrlKey && event.code === 'KeyW')
+        this.store.dispatch(new CloseSplit({ splitID: this.splittable.layout.id,
+                                             ix: this.pane.index }));
+    });
   }
 
   private titleHandler(title: string): void {
-    this.store.dispatch(new SetPrefs({ id: this.sessionID, prefs: { title } }));
+    this.zone.run(() => {
+      this.store.dispatch(new SetPrefs({ splitID: this.sessionID, prefs: { title } }));
+    });
   }
 
   private scrollHandler(y: number): void {
-    this.termSvc.scrollPos(this.sessionID, y);
+    this.zone.run(() => {
+      this.termSvc.scrollPos(this.sessionID, y);
+    });
   }
 
 }

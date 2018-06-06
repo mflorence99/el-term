@@ -26,7 +26,10 @@ export class RootCtrlComponent {
   @Select(WindowState) window$: Observable<WindowStateModel>;
 
   tab$: Observable<Tab> = this.tabs$.pipe(
-    map((tabs: TabsStateModel) => tabs.tabs.find(tab => tab.selected))
+    map((tabs: TabsStateModel) => {
+      const tab = tabs.tabs.find(tab => tab.selected);
+      return tab? { ...tab } : null;
+    })
   );
 
   tabIndex$: Observable<number> = this.tabs$.pipe(
@@ -36,7 +39,7 @@ export class RootCtrlComponent {
   layout$: Observable<Layout> = this.tab$.pipe(
     switchMap((tab: Tab) => {
       return this.layouts$.pipe(
-        map((model: LayoutStateModel) => tab? model[tab.id] : null)
+        map((model: LayoutStateModel) => tab? { ...model[tab.id] } : null)
       );
     })
   );

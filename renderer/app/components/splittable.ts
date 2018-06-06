@@ -12,7 +12,7 @@ import { debounce } from 'ellib';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'elterm-splittable',
   templateUrl: 'splittable.html',
   styleUrls: ['splittable.scss']
@@ -20,10 +20,10 @@ import { debounce } from 'ellib';
 
 export class SplittableComponent {
 
-  @Input() layout: Layout;
+  @Input() layout = { } as Layout;
   @Input() menu: ContextMenuComponent;
   @Input() swapWith: string;
-  @Input() tab: Tab;
+  @Input() tab = { } as Tab;
 
   private updateSplitSizes: Function;
 
@@ -41,9 +41,9 @@ export class SplittableComponent {
 
   // private methods
 
-  private _updateSplitSizes(id: string,
+  private _updateSplitSizes(splitID: string,
                             sizes: number[]): void {
-    this.store.dispatch(new UpdateSplitSizes({id, sizes}));
+    this.store.dispatch(new UpdateSplitSizes({splitID, sizes}));
   }
 
 }

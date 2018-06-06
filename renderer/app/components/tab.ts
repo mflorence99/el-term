@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { DrawerPanelComponent, LifecycleComponent, OnChange } from 'ellib';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Tab, UpdateTab } from '../state/tabs';
 
-import { DrawerPanelComponent } from 'ellib';
-import { LifecycleComponent } from 'ellib';
-import { OnChange } from 'ellib';
 import { Store } from '@ngxs/store';
 
 /**
@@ -47,7 +45,8 @@ export class TabComponent extends LifecycleComponent {
   }
 
   onSubmit() {
-    this.store.dispatch(new UpdateTab({ id: this.tab.id, ...this.tabForm.value }));
+    const tab = { id: this.tab.id, ...this.tabForm.value };
+    this.store.dispatch(new UpdateTab({ tab }));
     this.onCancel();
   }
 

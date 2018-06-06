@@ -1,4 +1,5 @@
 import * as os from 'os';
+import * as process from 'process';
 import * as psTree from 'ps-tree';
 
 import { ElectronService } from 'ngx-electron';
@@ -19,12 +20,14 @@ export class TerminalService {
 
   private nodePty_: { spawn: (shell: string, args: string[], opts: { }) => void };
   private os_: typeof os;
+  private process_: typeof process;
   private psTree_: typeof psTree;
 
   /** ctor */
   constructor(private electron: ElectronService) {
     this.nodePty_ = this.electron.remote.require('node-pty');
     this.os_ = this.electron.remote.require('os');
+    this.process_ = this.electron.process;
     this.psTree_ = this.electron.remote.require('ps-tree');
   }
 
@@ -41,10 +44,9 @@ export class TerminalService {
   ctrl_c(sessionID: string): void {
     const session = this.get(sessionID);
     if (session.pty) {
-      const process = this.electron.process;
       this.psTree_(session.pty.pid, (err, children) => {
         children.forEach(child => {
-          process.kill(Number(child.PID), 'SIGINT');
+          this.process_.kill(Number(child.PID), 'SIGINT');
           console.log(`%cctrl_c('${sessionID}') %c${child.COMMAND}`, `color: #d32f2f`, `color: black`);
         });
       });
@@ -61,7 +63,7 @@ export class TerminalService {
           titleHandler: Function,
           scrollHandler: Function): Terminal {
     const session = this.get(sessionID);
-    console.groupCollapsed(`%cconnect('${sessionID}')`, `color: #5d4037`);
+    console.group(`%cconnect('${sessionID}')`, `color: #5d4037`);
     // configure a new Terminal if one doesn't exist already
     this.connect2term(session, prefs, element);
     this.connect2pty(session, prefs);
@@ -315,33 +317,32 @@ export class TerminalService {
     else {
       const pp = element.parentNode;
       pp.insertBefore(session.element, element);
-      element.remove();
+      element.remove(); 
     }
   }
 
   private connect2pty(session: Session,
                       prefs: LayoutPrefs): void {
     if (!session.pty) {
-      const process = this.electron.process;
       // replace ~ for $HOME with actual home directory
-      let cwd = process.cwd();
+      let cwd = this.process_.cwd();
       if (prefs.directory) {
-        const home = process.env['HOME'];
+        const home = this.process_.env['HOME'];
         cwd = prefs.directory
           .replace(/^~/, home)
           .replace(/^\$HOME/, home);
       }
       // launch node-pty over real terminal
-      const shell = process.env[this.os_.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
+      const shell = this.process_.env[this.os_.platform() === 'win32'? 'COMSPEC' : 'SHELL'];
       session.pty = this.nodePty_.spawn(shell, [], {
         cols: config.terminalWindowCols,
         cwd: cwd,
-        env: process.env,
+        env: this.process_.env,
         name: 'xterm-256color',
         rows: config.terminalWindowRows
       });
       this.electron.ipcRenderer.send('connect', session.pty.pid);
-      console.log(`%cENV %c${JSON.stringify(process.env)}`, 'color: black', 'color: gray');
+      console.log(`%cENV %c${JSON.stringify(this.process_.env)}`, 'color: black', 'color: gray');
       console.log(`%cCWD %c${cwd}`, 'color: black', 'color: gray');
     }
   }
@@ -386,7 +387,7 @@ export class TerminalService {
       session.term.resize(session.cols, session.rows);
       session.pty.resize(session.cols, session.rows);
       // log size nicely because we refer to it all the time
-      console.groupCollapsed(`%cresize('${session.id}') %c${session.cols}x${session.rows}`, `color: #0b8043`, `color: black`);
+      console.group(`%cresize('${session.id}') %c${session.cols}x${session.rows}`, `color: #0b8043`, `color: black`);
         console.table({
           width: {pixels: width, cell: dims.actualCellWidth, cells: session.cols},
           height: {pixels: height, cell: dims.actualCellHeight, cells: session.rows}

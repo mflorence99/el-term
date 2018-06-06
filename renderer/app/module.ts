@@ -41,6 +41,7 @@ const SERVICES = [
     }),
     NgxsModule.forRoot(states),
     NgxsLoggerPluginModule.forRoot({
+      collapsed: false,
       logger: console
     }),
     NgxsStoragePluginModule.forRoot({

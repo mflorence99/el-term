@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { DrawerPanelComponent, LifecycleComponent, OnChange, nextTick } from 'ellib';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LayoutPrefs, SetPrefs } from '../state/layout';
 
-import { DrawerPanelComponent } from 'ellib';
-import { LifecycleComponent } from 'ellib';
-import { OnChange } from 'ellib';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
 
@@ -13,7 +11,7 @@ import { TerminalService } from '../services/terminal';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   selector: 'elterm-prefs',
   templateUrl: 'prefs.html',
   styleUrls: ['prefs.scss']
@@ -51,7 +49,13 @@ export class PrefsComponent extends LifecycleComponent {
   }
 
   onSubmit() {
-    this.store.dispatch(new SetPrefs({ id: this.prefsID, prefs: this.prefsForm.value }));
+    // TODO: why do we need this in Electron? and only running live?
+    // at worst, running in NgZone should work -- but otherwise a DOM
+    // event is necessary to force change detection
+    nextTick(() => {
+      this.store.dispatch(new SetPrefs({ splitID: this.prefsID,
+                                         prefs: this.prefsForm.value }));
+    });
     this.onCancel();
   }
 

@@ -8,52 +8,53 @@ import { nextTick } from 'ellib';
 
 export class CloseSplit {
   static readonly type = '[Layout] close split';
-  constructor(public readonly payload: {id: string, ix: number}) { }
+  constructor(public readonly payload: { splitID: string, ix: number }) { }
 }
 
 export class MakeSplit {
   static readonly type = '[Layout] make split';
-  constructor(public readonly payload:
-    {id: string, ix: number, direction: 'horizontal' | 'vertical', before: boolean}) { }
+  constructor(public readonly payload: { splitID: string, ix: number, direction: SplitDir, before: boolean }) { }
 }
 
 export class NewLayout {
   static readonly type = '[Layout] new layout';
-  constructor(public readonly payload: string) { }
+  constructor(public readonly payload: { splitID: string }) { }
 }
 
 export class RemoveLayout {
   static readonly type = '[Layout] remove layout';
-  constructor(public readonly payload: string) { }
+  constructor(public readonly payload: { splitID: string }) { }
 }
 
 export class SetPrefs {
   static readonly type = '[Layout] set prefs';
-  constructor(public readonly payload: {id: string, prefs: LayoutPrefs}) { }
+  constructor(public readonly payload: { splitID: string, prefs: LayoutPrefs }) { }
 }
 
 export class SetSearch {
   static readonly type = '[Layout] set search';
-  constructor(public readonly payload: {id: string, search: LayoutSearch}) { }
+  constructor(public readonly payload: { splitID: string, search: LayoutSearch }) { }
 }
 
 export class SetSearchWrap {
   static readonly type = '[Layout] set search wrap';
-  constructor(public readonly payload: {id: string, wrap: boolean}) { }
+  constructor(public readonly payload: { splitID: string, wrap: boolean }) { }
 }
 
 export class SwapWith {
   static readonly type = '[Layout] swap with';
-  constructor(public readonly payload: {id: string, with: string}) { }
+  constructor(public readonly payload: { splitID: string, targetID: string }) { }
 }
 
 export class UpdateSplitSizes {
   static readonly type = '[Layout] update split sizes';
-  constructor(public readonly payload: {id: string, sizes: number[]}) { }
+  constructor(public readonly payload: { splitID: string, sizes: number[] }) { }
 }
 
+export type SplitDir = 'horizontal' | 'vertical';
+
 export interface Layout {
-  direction?: 'horizontal' | 'vertical';
+  direction?: SplitDir;
   id: string;
   prefs?: LayoutPrefs;
   root?: boolean;
@@ -147,13 +148,14 @@ export interface LayoutStateModel {
   @Action(CloseSplit)
   closeSplit({ getState, setState }: StateContext<LayoutStateModel>,
              { payload }: CloseSplit) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
+    const { splitID, ix } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
     if (split) {
       // kill the terminal session we're closing
-      const splat = split.splits[payload.ix];
+      const splat = split.splits[ix];
       nextTick(() => this.termSvc.kill(splat.id));
-      split.splits.splice(payload.ix, 1);
+      split.splits.splice(ix, 1);
       // if we have more than one split left (or at the root level)
       // we set everyone to the same size, distributed evenly
       if (split.root || (split.splits.length > 1)) {
@@ -169,19 +171,20 @@ export interface LayoutStateModel {
         delete split.splits;
       }
     }
-    setState({ ...updated });
+    setState({ ...state });
   }
 
   @Action(MakeSplit)
   makeSplit({ getState, setState }: StateContext<LayoutStateModel>,
             { payload }: MakeSplit) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
+    const { splitID, ix, direction, before } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
     if (split) {
       // making a split on the same axis is easy
       // we set everyone to the same size, distributed evenly
-      if (split.direction === payload.direction) {
-        const iy = payload.ix + (payload.before? 0 : 1);
+      if (split.direction === direction) {
+        const iy = ix + (before? 0 : 1);
         split.splits.splice(iy, 0, { id: UUID.UUID(), size: 0 });
         const size = 100 / split.splits.length;
         split.splits.forEach(split => split.size = size);
@@ -190,13 +193,13 @@ export interface LayoutStateModel {
       // we create a new sub-split, preserving IDs
       // we also set everyone to the same size, distributed evenly
       else {
-        const splat = split.splits[payload.ix];
-        splat.direction = payload.direction;
+        const splat = split.splits[ix];
+        splat.direction = direction;
         const splatPrefs = { ...splat.prefs };
         splat.prefs = { };
         const splatID = splat.id;
         splat.id = UUID.UUID();
-        if (payload.before) {
+        if (before) {
           splat.splits = [{ id: UUID.UUID(), size: 50 },
                           { id: splatID, prefs: splatPrefs, size: 50 }];
         }
@@ -206,77 +209,83 @@ export interface LayoutStateModel {
         }
       }
     }
-    setState({ ...updated });
+    setState({ ...state });
   }
 
   @Action(NewLayout)
-  newLayout({ getState, setState }: StateContext<LayoutStateModel>,
+  newLayout({ patchState }: StateContext<LayoutStateModel>,
             { payload }: NewLayout) {
-    const updated = getState();
-    updated[payload] = LayoutState.defaultLayout();
-    setState({ ...updated });
+    const { splitID } = payload;
+    patchState({ [splitID]: LayoutState.defaultLayout() });
   }
 
   @Action(RemoveLayout)
   removeLayout({ getState, setState }: StateContext<LayoutStateModel>,
                { payload }: RemoveLayout) {
-    const updated = getState();
+    const { splitID } = payload;
+    const state = getState();
     // kill every terminal session we're deleting
-    const layout = updated[payload];
+    const layout = state[splitID];
     LayoutState.visitSplits(layout, splat => {
       nextTick(() => this.termSvc.kill(splat.id));
     });
-    delete updated[payload];
-    setState({ ...updated });
+    delete state[splitID];
+    setState({ ...state });
   }
 
   @Action(SetPrefs)
   setPrefs({ getState, setState }: StateContext<LayoutStateModel>,
            { payload }: SetPrefs) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
+    const { splitID, prefs } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
     if (split) {
       // NOTE: a bit convoluted as the payload may contain just some of the prefs
-      split.prefs = split.prefs || { };
-      Object.assign(split.prefs, payload.prefs);
+      const orig = split.prefs || { };
+      split.prefs = { ...orig, ...prefs};
     }
-    setState({ ...updated });
+    setState({ ...state });
   }
 
   @Action(SetSearch)
   setSearch({ getState, setState }: StateContext<LayoutStateModel>,
             { payload }: SetSearch) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
-    if (split)
-      split.search = { ...payload.search };
-    setState({ ...updated });
+    const { splitID, search } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
+    if (split) {
+      const orig = split.search || { };
+      split.search = { ...orig, ...search };
+    }
+    setState({ ...state });
   }
 
   @Action(SetSearchWrap)
   setSearchWrap({ getState, setState }: StateContext<LayoutStateModel>,
                 { payload }: SetSearchWrap) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
+    const { splitID, wrap } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
     if (split)
-      split.search.wrap = payload.wrap;
-    setState({ ...updated });
+      split.search = { ...split.search, wrap };
+    setState({ ...state });
   }
 
   @Action(SwapWith)
   swapWith({ getState, setState }: StateContext<LayoutStateModel>,
            { payload }: SwapWith) {
-    const updated = getState();
-    // NOTE: the "with" id is encoded as id[ix]
-    const compound = payload.with.split(/[\[\]]/);
+    const { splitID, targetID } = payload;
+    const state = getState();
+    // NOTE: the targetID is encoded as id[ix]
+    const compound = targetID.split(/[\[\]]/);
     const withID = compound[0];
     const ix = Number(compound[1]);
-    const p = LayoutState.findSplitByID(updated, payload.id);
-    const q = LayoutState.findSplitByID(updated, withID).splits[ix];
+    const p = LayoutState.findSplitByID(state, splitID);
+    const q = LayoutState.findSplitByID(state, withID).splits[ix];
     if (p.id !== q.id) {
       // swap the layout
       p.id = q.id;
-      q.id = payload.id;
+      q.id = splitID;
       const prefs = { ...p.prefs };
       p.prefs = { ...q.prefs };
       q.prefs = prefs;
@@ -285,18 +294,19 @@ export interface LayoutStateModel {
       q.search = search;
       // swap the sessions
       this.termSvc.swap(p.id, q.id);
-      setState({ ...updated });
+      setState({ ...state });
     }
   }
 
   @Action(UpdateSplitSizes)
   updateLayout({ getState, setState }: StateContext<LayoutStateModel>,
                { payload }: UpdateSplitSizes) {
-    const updated = getState();
-    const split = LayoutState.findSplitByID(updated, payload.id);
+    const { splitID, sizes } = payload;
+    const state = getState();
+    const split = LayoutState.findSplitByID(state, splitID);
     if (split)
-      payload.sizes.forEach((size, ix) => split.splits[ix].size = size);
-    setState({ ...updated });
+      sizes.forEach((size, ix) => split.splits[ix].size = size);
+    setState({ ...state });
   }
 
 }

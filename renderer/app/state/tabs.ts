@@ -17,7 +17,7 @@ export class NewTab {
 
 export class RemoveTab {
   static readonly type = '[Tabs] remove tab';
-  constructor(public readonly payload: Tab) { }
+  constructor(public readonly payload: { tab: Tab }) { }
 }
 
 export class SelectPermanentTab {
@@ -27,12 +27,12 @@ export class SelectPermanentTab {
 
 export class SelectTab {
   static readonly type = '[Tabs] select tab';
-  constructor(public readonly payload: Tab) { }
+  constructor(public readonly payload: { tab: Tab }) { }
 }
 
 export class UpdateTab {
   static readonly type = '[Tabs] update tab';
-  constructor(public readonly payload: any) { }
+  constructor(public readonly payload: { tab: Tab }) { }
 }
 
 /**
@@ -74,58 +74,72 @@ export interface TabsStateModel {
   @Action(MoveTab)
   moveTab({ getState, setState }: StateContext<TabsStateModel>,
           { payload }: MoveTab) {
-    const updated = getState();
-    const ix = TabsState.findTabIndexByID(updated, payload.tab.id);
-    updated.tabs.splice(ix, 1);
-    updated.tabs.splice(payload.ix, 0, payload.tab);
-    setState({ ...updated });
+    const { tab, ix } = payload;
+    const state = getState();
+    const iy = TabsState.findTabIndexByID(state, tab.id);
+    if (iy !== -1) {
+      state.tabs = state.tabs.slice(0);
+      state.tabs.splice(iy, 1);
+      state.tabs.splice(ix, 0, tab);
+      setState({ ...state });
+    }
   }
 
   @Action(NewTab)
   newTab({ dispatch, getState, setState }: StateContext<TabsStateModel>,
          { payload }: NewTab) {
-    const updated = getState();
+    const state = getState();
     const tab = new Tab('More Sessions');
-    updated.tabs.push(tab);
-    dispatch(new NewLayout(tab.id));
-    setState({ ...updated });
+    state.tabs = state.tabs.slice(0);
+    state.tabs.push(tab);
+    dispatch(new NewLayout({ splitID: tab.id }));
+    setState({ ...state });
   }
 
   @Action(RemoveTab)
   removeTab({ dispatch, getState, setState }: StateContext<TabsStateModel>,
             { payload }: RemoveTab) {
-    const updated = getState();
-    const ix = TabsState.findTabIndexByID(updated, payload.id);
-    updated.tabs.splice(ix, 1);
-    dispatch(new RemoveLayout(payload.id));
-    setState({ ...updated });
-    if (payload.selected)
-      dispatch(new SelectPermanentTab());
+    const { tab } = payload;
+    const state = getState();
+    const ix = TabsState.findTabIndexByID(state, tab.id);
+    if (ix !== -1) {
+      state.tabs = state.tabs.slice(0);
+      state.tabs.splice(ix, 1);
+      dispatch(new RemoveLayout({ splitID: tab.id }));
+      setState({ ...state });
+      if (tab.selected)
+        dispatch(new SelectPermanentTab());
+    }
   }
 
   @Action(SelectPermanentTab)
   selectPermanentTab({ getState, setState }: StateContext<TabsStateModel>,
                      { payload }: SelectPermanentTab) {
-    const updated = getState();
-    updated.tabs.forEach(tab => tab.selected = tab.permanent);
-    setState({ ...updated });
+    const state = getState();
+    state.tabs = state.tabs.map(tab => ({ ...tab, selected: tab.permanent }));
+    setState({ ...state });
   }
 
   @Action(SelectTab)
   selectTab({ getState, setState }: StateContext<TabsStateModel>,
             { payload }: SelectTab) {
-    const updated = getState();
-    updated.tabs.forEach(tab => tab.selected = (tab.id === payload.id));
-    setState({ ...updated });
+    const { tab } = payload;
+    const state = getState();
+    state.tabs = state.tabs.map(tab_ =>({ ...tab_, selected: tab.id === tab_.id }));
+    setState({ ...state });
   }
 
   @Action(UpdateTab)
   updateTab({ getState, setState }: StateContext<TabsStateModel>,
             { payload }: UpdateTab) {
-    const updated = getState();
-    const ix = TabsState.findTabIndexByID(updated, payload.id);
-    Object.assign(updated.tabs[ix], payload);
-    setState({ ...updated });
+    const { tab } = payload;
+    const state = getState();
+    const ix = TabsState.findTabIndexByID(state, tab.id);
+    if (ix !== -1) {
+      state.tabs = state.tabs.slice(0);
+      state.tabs[ix] = { ...state.tabs[ix], ...tab };
+      setState({ ...state });
+    }
   }
 
 }

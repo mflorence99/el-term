@@ -1,8 +1,8 @@
 import { CloseSplit, Layout, LayoutPrefs, LayoutSearch, LayoutState, MakeSplit } from '../../state/layout';
 import { Component, ViewChild } from '@angular/core';
+import { DrawerPanelComponent, debounce } from 'ellib';
 
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { DrawerPanelComponent } from 'ellib';
 import { ElectronService } from 'ngx-electron';
 import { SetBounds } from '../../state/window';
 import { SplittableComponent } from '../../components/splittable';
@@ -10,7 +10,6 @@ import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
 import { config } from '../../config';
-import { debounce } from 'ellib';
 
 /**
  * EL-Term Root
@@ -74,15 +73,15 @@ export class RootPageComponent {
 
   // event handlers
 
-  onContextMenu(event: {event?: MouseEvent,
-                        item: {id: string, ix: number}},
-                command: string): void {
+  onExecute(event: {event?: MouseEvent,
+                    item: {id: string, ix: number}},
+            command: string): void {
     const actions = [];
-    const id = event.item.id;
+    const splitID = event.item.id;
     const ix = event.item.ix;
     const win = this.electron.remote.getCurrentWindow();
     // make sure the session has the focus
-    const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, id);
+    const layout = LayoutState.findSplitByIDImpl(this.splittable.layout, splitID);
     const split = layout.splits[ix];
     this.termSvc.focus(split.id);
     // act on command
@@ -100,7 +99,7 @@ export class RootPageComponent {
         });
         break;
       case 'close':
-        actions.push(new CloseSplit({ id, ix }));
+        actions.push(new CloseSplit({ splitID, ix }));
         break;
       case 'copy':
         this.electron.clipboard.writeText(this.termSvc.getSelection(split.id));
@@ -119,10 +118,10 @@ export class RootPageComponent {
         });
         break;
       case 'horizontal-':
-        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: true }));
+        actions.push(new MakeSplit({ splitID, ix, direction: 'horizontal', before: true }));
         break;
       case 'horizontal+':
-        actions.push(new MakeSplit({ id, ix, direction: 'horizontal', before: false }));
+        actions.push(new MakeSplit({ splitID, ix, direction: 'horizontal', before: false }));
         break;
       case 'paste':
         this.termSvc.write(split.id, this.electron.clipboard.readText());
@@ -141,13 +140,13 @@ export class RootPageComponent {
         this.searchDrawer.open();
         break;
       case 'swapWith':
-        this.swapWith = `${id}[${ix}]`;
+        this.swapWith = `${splitID}[${ix}]`;
         break;
       case 'vertical-':
-        actions.push(new MakeSplit({ id, ix, direction: 'vertical', before: true }));
+        actions.push(new MakeSplit({ splitID, ix, direction: 'vertical', before: true }));
         break;
       case 'vertical+':
-        actions.push(new MakeSplit({ id, ix, direction: 'vertical', before: false }));
+        actions.push(new MakeSplit({ splitID, ix, direction: 'vertical', before: false }));
         break;
     }
     // dispatch action

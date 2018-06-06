@@ -20,7 +20,7 @@ import { nextTick } from 'ellib';
 
 export class TabsComponent {
 
-  @Input() tabs: TabsStateModel;
+  @Input() tabs = { } as TabsStateModel;
   @Input() tabIndex: number;
 
   @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
@@ -48,7 +48,7 @@ export class TabsComponent {
         // NOTE: we need to make sure a tab is selected after we delete
         // one that itself may have been selected -- we also delay removal
         // so this component can clean up first
-        nextTick(() => this.store.dispatch(new RemoveTab(tab)));
+        nextTick(() => this.store.dispatch(new RemoveTab({ tab })));
         break;
     }
   }
@@ -57,7 +57,7 @@ export class TabsComponent {
             ix: number) {
     this.store.dispatch([
       new MoveTab({ tab, ix }),
-      new SelectTab(tab)
+      new SelectTab({ tab })
     ]);
   }
 
@@ -66,7 +66,7 @@ export class TabsComponent {
   }
 
   onTabSelect(ix: number) {
-    this.store.dispatch(new SelectTab(this.tabs.tabs[ix]));
+    this.store.dispatch(new SelectTab({ tab: this.tabs.tabs[ix] }));
   }
 
 }

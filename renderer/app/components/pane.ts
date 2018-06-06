@@ -13,7 +13,7 @@ import { debounce } from 'ellib';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'elterm-pane',
   templateUrl: 'pane.html',
   styleUrls: ['pane.scss']
@@ -45,7 +45,7 @@ export class PaneComponent {
 
   @HostListener('click') onClick() {
     if (this.swapping) {
-      this.store.dispatch(new SwapWith({ id: this.sessionID, with: this.swapWith }));
+      this.store.dispatch(new SwapWith({ splitID: this.sessionID, targetID: this.swapWith }));
       this.swapping = false;
       this.root.swapWith = null;
     }

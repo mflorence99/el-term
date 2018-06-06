@@ -7,6 +7,8 @@ export class Config {
   resizePaneThrottle = 250;
   setBoundsThrottle = 250;
 
+  searchWrapHiliteDelay = 1500;
+
   terminalWindowBg = '#212121'; // var(--mat-grey-900)
   terminalWindowCols = 80;
   terminalWindowFg = '#f5f5f5';  // var(--mat-grey-100)
