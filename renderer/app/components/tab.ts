@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RemoveTab, SelectPermanentTab, Tab, UpdateTab } from '../state/tabs';
+import { Tab, UpdateTab } from '../state/tabs';
 
 import { DrawerPanelComponent } from 'ellib';
 import { LifecycleComponent } from 'ellib';
 import { OnChange } from 'ellib';
 import { Store } from '@ngxs/store';
-import { nextTick } from 'ellib';
 
 /**
  * Tab component
@@ -23,7 +22,6 @@ export class TabComponent extends LifecycleComponent {
 
   @Input() tab = { } as Tab;
 
-  areYouSure: boolean;
   tabForm: FormGroup;
 
   /** ctor */
@@ -41,24 +39,11 @@ export class TabComponent extends LifecycleComponent {
   // event handlers
 
   onCancel() {
-    this.areYouSure = false;
     this.drawerPanel.close();
   }
 
   onClear(nm: string) {
     this.tabForm.patchValue({ [nm]: '' }, { emitEvent: false });
-  }
-
-  onRemove(areYouSure: boolean) {
-    if (areYouSure) {
-      // NOTE: we need to make sure a tab is selected after we delete
-      // one that itself may have been selected -- we also delay removal
-      // so this component can clean up first
-      this.store.dispatch(new SelectPermanentTab());
-      nextTick(() => this.store.dispatch(new RemoveTab(this.tab)));
-      this.onCancel();
-    }
-    else this.areYouSure = true;
   }
 
   onSubmit() {
@@ -69,7 +54,6 @@ export class TabComponent extends LifecycleComponent {
   // bind OnChange handlers
 
   @OnChange('tab') patchTab() {
-    this.areYouSure = false;
     if (this.tab)
       this.tabForm.patchValue(this.tab, {emitEvent: false});
   }

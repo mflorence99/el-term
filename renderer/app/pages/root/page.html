@@ -1,7 +1,6 @@
 <lib-drawer-container>
 
   <elterm-tabs
-    (editTab)="onEditTab($event)"
     [tabs]="ctrl.tabs$ | async"
     [tabIndex]="ctrl.tabIndex$ | async">
   </elterm-tabs>

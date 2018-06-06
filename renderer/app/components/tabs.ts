@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { MoveTab, NewTab, Tab, TabsStateModel } from '../state/tabs';
+import { RemoveTab, SelectPermanentTab, SelectTab } from '../state/tabs';
 
-import { SelectTab } from '../state/tabs';
+import { ContextMenuComponent } from 'ngx-contextmenu';
+import { RootPageComponent } from '../pages/root/page';
 import { Store } from '@ngxs/store';
+import { nextTick } from 'ellib';
 
 /**
  * Tabs component
@@ -20,22 +23,42 @@ export class TabsComponent {
   @Input() tabs: TabsStateModel;
   @Input() tabIndex: number;
 
-  @Output() editTab = new EventEmitter<Tab>();
+  @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
 
   /** ctor */
-  constructor(private store: Store) { }
+  constructor(private root: RootPageComponent,
+              private store: Store) { }
+
+  /** Is this tab removeable? */
+  isTabRemoveable(tab: Tab): boolean {
+    return !tab.permanent;
+  }
 
   // event handlers
 
-  onEditTab(event: MouseEvent,
-            tab: Tab) {
-    this.editTab.emit(tab);
-    event.stopPropagation();
+  onExecute(event: {event?: MouseEvent,
+                    item: Tab},
+            command: string): void {
+    const tab = event.item;
+    switch (command) {
+      case 'edit':
+        this.root.onEditTab(tab);
+        break;
+      case 'remove':
+        // NOTE: we need to make sure a tab is selected after we delete
+        // one that itself may have been selected -- we also delay removal
+        // so this component can clean up first
+        nextTick(() => this.store.dispatch([new RemoveTab(tab), new SelectPermanentTab()]));
+        break;
+    }
   }
 
   onMoveTab(tab: Tab,
             ix: number) {
-    this.store.dispatch(new MoveTab({ tab, ix }));
+    this.store.dispatch([
+      new MoveTab({ tab, ix }),
+      new SelectTab(tab)
+    ]);
   }
 
   onNewTab() {

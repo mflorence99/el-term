@@ -37,6 +37,7 @@ app.on('ready', () => {
       query: {isDev: true},
       slashes: true
     }));
+    theWindow.webContents.openDevTools();
   }
   else {
     theWindow.loadURL(url.format({

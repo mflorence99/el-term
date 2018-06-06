@@ -6,6 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { DragDropDirectiveModule } from 'angular4-drag-drop';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LibModule } from 'ellib';
 import { NgModule } from '@angular/core';
 import { NgxElectronModule } from 'ngx-electron';
@@ -22,6 +23,7 @@ const MODULES = [
   CommonModule,
   ContextMenuModule,
   DragDropDirectiveModule,
+  FontAwesomeModule,
   LibModule,
   MatButtonModule,
   MatButtonToggleModule,

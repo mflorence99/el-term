@@ -43,7 +43,7 @@ export class Tab {
 
   /** ctor */
   constructor(public label: string,
-              public icon = 'fab fa-linux',
+              public icon = 'fab linux',
               public color = 'var(--mat-grey-100)',
               public permanent = false,
               public id = UUID.UUID(),
@@ -60,7 +60,7 @@ export interface TabsStateModel {
   defaults: {
     tabs: [
       // NOTE: the base "permanent" tab has a well-known ID b/c we use in in layout
-      new Tab('My Sessions', 'fab fa-linux', 'var(--mat-grey-100)', true, '0', true)
+      new Tab('My Sessions', 'fab linux', 'var(--mat-grey-100)', true, '0', true)
     ]
   }
 }) export class TabsState {

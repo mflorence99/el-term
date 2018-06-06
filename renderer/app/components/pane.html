@@ -11,10 +11,10 @@
   [ngStyle]="{color: tab.color}"
   class="badge">
 
-  <i
-    [ngClass]="tab.icon"
-    class="fa-lg icon">
-  </i>
+  <fa-icon
+    [icon]="tab.icon.split(' ')"
+    size="lg">
+  </fa-icon>
 
   <div *ngIf="prefs?.badge">
     {{ prefs.badge }}
