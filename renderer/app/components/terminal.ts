@@ -40,14 +40,19 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   // lifecycle methods
 
   ngAfterViewInit() {
-    this.termSvc.connect(this.sessionID,
-                         this.prefs || { },
-                         this.xterm.nativeElement,
-                         this.dataHandler.bind(this),
-                         this.focusHandler.bind(this),
-                         this.keyHandler.bind(this),
-                         this.titleHandler.bind(this),
-                         this.scrollHandler.bind(this));
+    // NOTE: we do this to make sure that the Roboto Mono font load is complete
+    // https://github.com/mflorence99/el-term/issues/8
+    // https://github.com/xtermjs/xterm.js/issues/1164
+    nextTick(() => {
+      this.termSvc.connect(this.sessionID,
+                           this.prefs || { },
+                           this.xterm.nativeElement,
+                           this.dataHandler.bind(this),
+                           this.focusHandler.bind(this),
+                           this.keyHandler.bind(this),
+                           this.titleHandler.bind(this),
+                           this.scrollHandler.bind(this));
+    });
   }
 
   ngOnDestroy() {
