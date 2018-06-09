@@ -23,6 +23,7 @@
 </div>
 
 <elterm-terminal
+  (focus)="focused = $event"
   (libResized)="onResized($event)"
   [prefs]="prefs"
   [search]="search"
