@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
 import { CloseSplit, LayoutPrefs, LayoutSearch } from '../state/layout';
 
 import { ElectronService } from 'ngx-electron';
@@ -26,6 +26,8 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   @Input() prefs = { } as LayoutPrefs;
   @Input() search = { } as LayoutSearch;
   @Input() sessionID: string;
+
+  @Output() focus = new EventEmitter<boolean>();
 
   @ViewChild('xterm') xterm: ElementRef;
 
@@ -77,7 +79,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
     // we are violating one-way data flow and a child (this) changes the state
     // of a parent -- we used to code an EventEmitter here but given that
     // we're off-track anyway, let's just hack in the change
-    nextTick(() => this.pane.focused = focused);
+    this.zone.run(() => this.focus.emit(focused));
   }
 
   private keyHandler(event: KeyboardEvent): void {

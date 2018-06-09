@@ -29,8 +29,9 @@ export class PaneComponent {
   @Input() tab: Tab;
 
   focused = false;
-  onResized: Function;
   swapping = false;
+
+  onResized: Function;
 
   /** ctor */
   constructor(private root: RootPageComponent,
