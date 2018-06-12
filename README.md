@@ -97,7 +97,7 @@ So in _El terminador_ you can't pick a font, or a font size, or change backgroun
 
 ### Customizing Tabs
 
-Click on the tab's icon.
+Right click on the tab's icon.
 
 ![Customizing Tabs](tab.png)
 
