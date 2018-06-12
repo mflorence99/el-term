@@ -77,18 +77,12 @@ cd el-term
 npm install
 ```
 
-Then build the installation files.
+Then package and install _El terminador_.
 
 ```sh
 npm run package
 npm run deb64
-```
-
-Now you can install _El terminador_.
-
-```sh
-cd build/installers/
-dpkg elterm_1.0.0_amd64.deb
+npm run deb64-install
 ```
 
 ## Customization
