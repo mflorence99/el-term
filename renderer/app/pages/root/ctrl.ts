@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Layout, LayoutState, LayoutStateModel } from '../../state/layout';
-import { Tab, TabsState, TabsStateModel } from '../../state/tabs';
-import { WindowState, WindowStateModel } from '../../state/window';
-import { map, switchMap, take } from 'rxjs/operators';
-
+import { ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { Layout } from '../../state/layout';
+import { LayoutState } from '../../state/layout';
+import { LayoutStateModel } from '../../state/layout';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
+import { switchMap } from 'rxjs/operators';
+import { Tab } from '../../state/tabs';
+import { TabsState } from '../../state/tabs';
+import { TabsStateModel } from '../../state/tabs';
+import { take } from 'rxjs/operators';
+import { WindowState } from '../../state/window';
+import { WindowStateModel } from '../../state/window';
 
 /**
  * Root controller

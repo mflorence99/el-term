@@ -1,11 +1,17 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
-import { MoveTab, NewTab, Tab, TabsStateModel } from '../state/tabs';
-import { RemoveTab, SelectTab } from '../state/tabs';
-
+import { ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { RootPageComponent } from '../pages/root/page';
-import { Store } from '@ngxs/store';
+import { Input } from '@angular/core';
+import { MoveTab } from '../state/tabs';
+import { NewTab } from '../state/tabs';
 import { nextTick } from 'ellib';
+import { RemoveTab } from '../state/tabs';
+import { RootPageComponent } from '../pages/root/page';
+import { SelectTab } from '../state/tabs';
+import { Store } from '@ngxs/store';
+import { Tab } from '../state/tabs';
+import { TabsStateModel } from '../state/tabs';
+import { ViewChild } from '@angular/core';
 
 /**
  * Tabs component

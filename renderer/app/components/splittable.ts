@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
+import { ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ContextMenuComponent } from 'ngx-contextmenu';
+import { debounce } from 'ellib';
+import { Input } from '@angular/core';
 import { Layout } from '../state/layout';
 import { Store } from '@ngxs/store';
 import { Tab } from '../state/tabs';
 import { UpdateSplitSizes } from '../state/layout';
-import { debounce } from 'ellib';
 
 /**
  * Splittable component

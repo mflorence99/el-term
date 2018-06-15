@@ -1,15 +1,21 @@
-import { CloseSplit, Layout, LayoutPrefs, LayoutSearch, LayoutState, MakeSplit } from '../../state/layout';
-import { Component, ViewChild } from '@angular/core';
-import { DrawerPanelComponent, debounce } from 'ellib';
-
+import { CloseSplit } from '../../state/layout';
+import { Component } from '@angular/core';
+import { config } from '../../config';
 import { ContextMenuComponent } from 'ngx-contextmenu';
+import { debounce } from 'ellib';
+import { DrawerPanelComponent } from 'ellib';
 import { ElectronService } from 'ngx-electron';
+import { Layout } from '../../state/layout';
+import { LayoutPrefs } from '../../state/layout';
+import { LayoutSearch } from '../../state/layout';
+import { LayoutState } from '../../state/layout';
+import { MakeSplit } from '../../state/layout';
 import { SetBounds } from '../../state/window';
 import { SplittableComponent } from '../../components/splittable';
 import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
-import { config } from '../../config';
+import { ViewChild } from '@angular/core';
 
 /**
  * EL-Term Root

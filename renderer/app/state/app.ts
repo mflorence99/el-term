@@ -1,6 +1,9 @@
-import { LayoutState, LayoutStateModel } from './layout';
-import { TabsState, TabsStateModel } from './tabs';
-import { WindowState, WindowStateModel } from './window';
+import { LayoutState } from './layout';
+import { LayoutStateModel } from './layout';
+import { TabsState } from './tabs';
+import { TabsStateModel } from './tabs';
+import { WindowState } from './window';
+import { WindowStateModel } from './window';
 
 export interface AppState {
   layout: LayoutStateModel;

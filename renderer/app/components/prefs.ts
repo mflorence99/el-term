@@ -1,8 +1,14 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { DrawerPanelComponent, LifecycleComponent, OnChange, nextTick } from 'ellib';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { LayoutPrefs, SetPrefs } from '../state/layout';
-
+import { ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
+import { DrawerPanelComponent } from 'ellib';
+import { FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
+import { Input } from '@angular/core';
+import { LayoutPrefs } from '../state/layout';
+import { LifecycleComponent } from 'ellib';
+import { nextTick } from 'ellib';
+import { OnChange } from 'ellib';
+import { SetPrefs } from '../state/layout';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
 

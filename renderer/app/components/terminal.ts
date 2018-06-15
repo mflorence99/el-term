@@ -1,14 +1,24 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
-import { CloseSplit, LayoutPrefs, LayoutSearch } from '../state/layout';
-
+import { AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { CloseSplit } from '../state/layout';
+import { Component } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { ElementRef } from '@angular/core';
+import { EventEmitter } from '@angular/core';
+import { Input } from '@angular/core';
+import { LayoutPrefs } from '../state/layout';
+import { LayoutSearch } from '../state/layout';
+import { nextTick } from 'ellib';
+import { NgZone } from '@angular/core';
+import { OnDestroy } from '@angular/core';
+import { Output } from '@angular/core';
 import { PaneComponent } from '../components/pane';
 import { RootPageComponent } from '../pages/root/page';
 import { SetPrefs } from '../state/layout';
 import { SplittableComponent } from '../components/splittable';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
-import { nextTick } from 'ellib';
+import { ViewChild } from '@angular/core';
 
 /**
  * Terminal component

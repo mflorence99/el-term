@@ -1,6 +1,8 @@
-import { Action, State, StateContext } from '@ngxs/store';
-import { NewLayout, RemoveLayout } from './layout';
-
+import { Action } from '@ngxs/store';
+import { NewLayout } from './layout';
+import { RemoveLayout } from './layout';
+import { State } from '@ngxs/store';
+import { StateContext } from '@ngxs/store';
 import { UUID } from 'angular2-uuid';
 
 /** NOTE: actions must come first because of AST */

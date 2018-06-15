@@ -1,15 +1,15 @@
-import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
-
 import { BarrelModule } from './barrel';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { NgModule } from '@angular/core';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { RootPageComponent } from './pages/root/page';
 import { RootPageModule } from './pages/root/module';
-import { TerminalService } from './services/terminal';
 import { states } from './state/app';
+import { StorageOption } from '@ngxs/storage-plugin';
+import { TerminalService } from './services/terminal';
 
 /**
  * el-term module definition

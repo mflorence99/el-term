@@ -1,12 +1,16 @@
-import { ChangeDetectionStrategy, Component, HostListener, Input } from '@angular/core';
-import { LayoutPrefs, LayoutSearch, SwapWith } from '../state/layout';
-
-import { RootPageComponent } from '../pages/root/page';
-import { Store } from '@ngxs/store';
-import { Tab } from '../state/tabs';
-import { TerminalService } from '../services/terminal';
+import { ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { config } from '../config';
 import { debounce } from 'ellib';
+import { HostListener } from '@angular/core';
+import { Input } from '@angular/core';
+import { LayoutPrefs } from '../state/layout';
+import { LayoutSearch } from '../state/layout';
+import { RootPageComponent } from '../pages/root/page';
+import { Store } from '@ngxs/store';
+import { SwapWith } from '../state/layout';
+import { Tab } from '../state/tabs';
+import { TerminalService } from '../services/terminal';
 
 /**
  * Pane component
