@@ -7,9 +7,10 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { RootPageComponent } from './pages/root/page';
 import { RootPageModule } from './pages/root/module';
-import { states } from './state/app';
 import { StorageOption } from '@ngxs/storage-plugin';
 import { TerminalService } from './services/terminal';
+
+import { states } from './state/app';
 
 /**
  * el-term module definition

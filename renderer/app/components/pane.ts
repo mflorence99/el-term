@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Component } from '@angular/core';
-import { config } from '../config';
-import { debounce } from 'ellib';
 import { HostListener } from '@angular/core';
 import { Input } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
@@ -11,6 +9,9 @@ import { Store } from '@ngxs/store';
 import { SwapWith } from '../state/layout';
 import { Tab } from '../state/tabs';
 import { TerminalService } from '../services/terminal';
+
+import { config } from '../config';
+import { debounce } from 'ellib';
 
 /**
  * Pane component

@@ -3,6 +3,7 @@ import { ComponentsModule } from '../../components/module';
 import { NgModule } from '@angular/core';
 import { RootCtrlComponent } from './ctrl';
 import { RootPageComponent } from './page';
+
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';

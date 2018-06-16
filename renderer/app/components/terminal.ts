@@ -8,7 +8,6 @@ import { EventEmitter } from '@angular/core';
 import { Input } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
 import { LayoutSearch } from '../state/layout';
-import { nextTick } from 'ellib';
 import { NgZone } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { Output } from '@angular/core';
@@ -19,6 +18,8 @@ import { SplittableComponent } from '../components/splittable';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
 import { ViewChild } from '@angular/core';
+
+import { nextTick } from 'ellib';
 
 /**
  * Terminal component

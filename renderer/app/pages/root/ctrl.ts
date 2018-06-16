@@ -4,16 +4,17 @@ import { ElectronService } from 'ngx-electron';
 import { Layout } from '../../state/layout';
 import { LayoutState } from '../../state/layout';
 import { LayoutStateModel } from '../../state/layout';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
-import { switchMap } from 'rxjs/operators';
 import { Tab } from '../../state/tabs';
 import { TabsState } from '../../state/tabs';
 import { TabsStateModel } from '../../state/tabs';
-import { take } from 'rxjs/operators';
 import { WindowState } from '../../state/window';
 import { WindowStateModel } from '../../state/window';
+
+import { map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 /**
  * Root controller

@@ -2,12 +2,13 @@ import * as os from 'os';
 import * as process from 'process';
 import * as psTree from 'ps-tree';
 
-import { config } from '../config';
 import { ElectronService } from 'ngx-electron';
 import { Injectable } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
-import { nextTick } from 'ellib';
 import { Terminal } from 'xterm';
+
+import { config } from '../config';
+import { nextTick } from 'ellib';
 
 /**
  * Encapsulates xterm <==> node-pty communication

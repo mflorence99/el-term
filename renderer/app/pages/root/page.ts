@@ -1,8 +1,6 @@
 import { CloseSplit } from '../../state/layout';
 import { Component } from '@angular/core';
-import { config } from '../../config';
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { debounce } from 'ellib';
 import { DrawerPanelComponent } from 'ellib';
 import { ElectronService } from 'ngx-electron';
 import { Layout } from '../../state/layout';
@@ -16,6 +14,9 @@ import { Store } from '@ngxs/store';
 import { Tab } from '../../state/tabs';
 import { TerminalService } from '../../services/terminal';
 import { ViewChild } from '@angular/core';
+
+import { config } from '../../config';
+import { debounce } from 'ellib';
 
 /**
  * EL-Term Root

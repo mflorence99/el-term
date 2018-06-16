@@ -1,9 +1,10 @@
 import { Action } from '@ngxs/store';
-import { nextTick } from 'ellib';
 import { State } from '@ngxs/store';
 import { StateContext } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
 import { UUID } from 'angular2-uuid';
+
+import { nextTick } from 'ellib';
 
 /** NOTE: actions must come first because of AST */
 

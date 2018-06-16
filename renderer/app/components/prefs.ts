@@ -6,11 +6,12 @@ import { FormGroup } from '@angular/forms';
 import { Input } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
 import { LifecycleComponent } from 'ellib';
-import { nextTick } from 'ellib';
 import { OnChange } from 'ellib';
 import { SetPrefs } from '../state/layout';
 import { Store } from '@ngxs/store';
 import { TerminalService } from '../services/terminal';
+
+import { nextTick } from 'ellib';
 
 /**
  * Prefs component
