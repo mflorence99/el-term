@@ -1,4 +1,6 @@
 import { BarrelModule } from './barrel';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { NgModule } from '@angular/core';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
@@ -20,6 +22,8 @@ const COMPONENTS = [ ];
 
 const MODULES = [
   BarrelModule,
+  BrowserAnimationsModule,
+  BrowserModule,
   RootPageModule
 ];
 
