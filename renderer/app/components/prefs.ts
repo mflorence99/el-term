@@ -18,7 +18,7 @@ import { nextTick } from 'ellib';
  */
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'elterm-prefs',
   templateUrl: 'prefs.html',
   styleUrls: ['prefs.scss']
