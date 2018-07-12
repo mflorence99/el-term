@@ -7,7 +7,8 @@ EL-Term is an Electron-based Terminal Emulator. Because I'm sure I'll be the onl
 - [Highlights](#highlights)
 - [Technology Stack](#technology-stack)
 - [How to Run in Development Mode](#how-to-run-in-development-mode)
-- [How to Run in Production Mode](#how-to-run-in-production-mode)
+- [How to Run in Production Mode (Linux)](#how-to-run-in-production-mode-linux)
+- [How to Run in Production Mode (Windows and Mac)](#how-to-run-in-production-mode-windows-and-mac)
 - [Customization](#customization)
   * [Customizing Tabs](#customizing-tabs)
   * [Customizing Splits](#customizing-splits)
@@ -63,7 +64,7 @@ Finally, in another session, start the Electron app itself.
 npm run test
 ```
 
-## How to Run in Production Mode
+## How to Run in Production Mode (Linux)
 
 > NOTE: this currently only works for Ubuntu / Debian.
 
@@ -83,6 +84,14 @@ Then package and install _El terminador_.
 npm run package
 npm run deb64
 npm run deb64-install
+```
+
+## How to Run in Production Mode (Windows and Mac)
+
+Although there are currently no installation files except for Linux, you can still start _El terminador_ in production mode.
+
+```sh
+npm run live
 ```
 
 ## Customization
