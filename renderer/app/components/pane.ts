@@ -52,12 +52,19 @@ export class PaneComponent {
 
   onDrop(event: DndDropEvent): void {
     console.log(event.event.dataTransfer.files);
+    let path;
+    // could be drag from filr manager for example
     if (event.isExternal && (event.event.dataTransfer.files.length > 0)) {
       const file = event.event.dataTransfer.files.item(0);
-      if (file.path) {
-        this.termSvc.focus(this.sessionID);
-        this.termSvc.write(this.sessionID, `'${file.path}'`);
-      }
+      path = file.path;
+    }
+    // or it could be a drag from another of our Electron apps
+    else if (event.data)
+      path = event.data.path;
+    // anything to drop?
+    if (path) {
+      this.termSvc.focus(this.sessionID);
+      this.termSvc.write(this.sessionID, `'${path}'`);
     }
   }
 
