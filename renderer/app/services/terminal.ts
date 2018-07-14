@@ -377,9 +377,6 @@ export class TerminalService {
                         width: number,
                         height: number): void {
     if ((<any>session.term).renderer && (<any>session.term).viewport) {
-      // TODO: don't really know how to make this calculation work,
-      // especially for height/rows -- pty seems to have some row calculation
-      // hidden factor
       const dims = (<any>session.term).renderer.dimensions;
       const padding = config.terminalWindowPadding;
       session.cols = Math.max(Math.round((width - (2 * padding)) / dims.actualCellWidth), 1);

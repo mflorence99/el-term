@@ -12,6 +12,15 @@ elterm-terminal {
   z-index: 1;
 }
 
+.drop-target {
+  height: 100%;
+}
+
+.drop-target .badge,
+.drop-target .title {
+  filter: sepia(100%);
+}
+
 .badge,
 .title {
   filter: opacity(50%);

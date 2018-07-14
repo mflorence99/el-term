@@ -1,31 +1,39 @@
 <div
-  [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
-  [ngStyle]="{color: tab.color}"
-  *ngIf="prefs?.title"
-  class="title">
-  {{ prefs.title }}
-</div>
+  (dndDrop)="onDrop($event)"
+  [dndAllowExternal]="true"
+  dndDragoverClass="drop-target"
+  dndDropzone>
 
-<div
-  [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
-  [ngStyle]="{color: tab.color}"
-  class="badge">
-
-  <fa-icon
-    [icon]="tab.icon.split(' ')"
-    size="lg">
-  </fa-icon>
-
-  <div *ngIf="prefs?.badge">
-    {{ prefs.badge }}
+  <div
+    [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
+    [ngStyle]="{color: tab.color}"
+    *ngIf="prefs?.title"
+    class="title">
+    {{ prefs.title }}
   </div>
 
-</div>
+  <div
+    [ngClass]="{focused: focused, swapping: swapping, wrapping: search?.wrap}"
+    [ngStyle]="{color: tab.color}"
+    class="badge">
 
-<elterm-terminal
-  (focus)="focused = $event"
-  (libResized)="onResized($event)"
-  [prefs]="prefs"
-  [search]="search"
-  [sessionID]="sessionID">
-</elterm-terminal>
+    <fa-icon
+      [icon]="tab.icon.split(' ')"
+      size="lg">
+    </fa-icon>
+
+    <div *ngIf="prefs?.badge">
+      {{ prefs.badge }}
+    </div>
+
+  </div>
+
+  <elterm-terminal
+    (focus)="focused = $event"
+    (libResized)="onResized($event)"
+    [prefs]="prefs"
+    [search]="search"
+    [sessionID]="sessionID">
+  </elterm-terminal>
+
+</div>

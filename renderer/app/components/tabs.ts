@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Component } from '@angular/core';
 import { ContextMenuComponent } from 'ngx-contextmenu';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { Input } from '@angular/core';
 import { MoveTab } from '../state/tabs';
 import { NewTab } from '../state/tabs';
@@ -60,8 +61,9 @@ export class TabsComponent {
     }
   }
 
-  onMoveTab(tab: Tab,
+  onMoveTab(event: DndDropEvent,
             ix: number) {
+    const tab = event.data;
     this.store.dispatch([
       new MoveTab({ tab, ix }),
       new SelectTab({ tab })

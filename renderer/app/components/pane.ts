@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Component } from '@angular/core';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { HostListener } from '@angular/core';
 import { Input } from '@angular/core';
 import { LayoutPrefs } from '../state/layout';
@@ -45,6 +46,19 @@ export class PaneComponent {
     this.onResized = debounce((event: { newWidth, newHeight }) => {
       this.termSvc.resize(this.sessionID, { width: event.newWidth, height: event.newHeight });
     }, config.resizePaneThrottle);
+  }
+
+  // event handlers
+
+  onDrop(event: DndDropEvent): void {
+    console.log(event.event.dataTransfer.files);
+    if (event.isExternal && (event.event.dataTransfer.files.length > 0)) {
+      const file = event.event.dataTransfer.files.item(0);
+      if (file.path) {
+        this.termSvc.focus(this.sessionID);
+        this.termSvc.write(this.sessionID, `'${file.path}'`);
+      }
+    }
   }
 
   // listeners

@@ -40,7 +40,7 @@ First of all, none of what I attempted to do would amount to anything without th
 * [Font Awesome](https://fontawesome.com)'s awesome library of icons.
 * The amazing [ngxs](https://ngxs.gitbooks.io/ngxs/) state management pattern.
 * [angular-split](https://bertrandg.github.io/angular-split/#/) handles all the details of the arbitrary splits that _El terminador_ supports.
-* [angular4-drag-drop](https://bitbucket.org/IpponMattRitter/angular4-drag-drop) allows tabs to be reordered.
+* [ngx-drag-drop](https://www.npmjs.com/package/ngx-drag-drop) supports file drop into a terminal session and allows tabs to be reordered.
 
 ## How to Run in Development Mode
 
