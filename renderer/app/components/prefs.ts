@@ -68,7 +68,7 @@ export class PrefsComponent extends LifecycleComponent {
 
   // bind OnChange handlers
 
-  @OnChange('prefs') patchTab() {
+  @OnChange('prefs') newState() {
     if (this.prefs)
       this.prefsForm.patchValue(this.prefs, {emitEvent: false});
   }

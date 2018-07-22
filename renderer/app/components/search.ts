@@ -86,7 +86,7 @@ export class SearchComponent extends LifecycleComponent {
 
   // bind OnChange handlers
 
-  @OnChange('search') patchTab() {
+  @OnChange('search') newState() {
     if (this.search)
       this.searchForm.patchValue(this.search, {emitEvent: false});
   }
