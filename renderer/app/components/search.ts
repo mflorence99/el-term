@@ -48,7 +48,7 @@ export class SearchComponent extends LifecycleComponent {
   // event handlers
 
   onClear(nm: string) {
-    this.searchForm.patchValue({ [nm]: '' }, {emitEvent: false});
+    this.searchForm.patchValue({ [nm]: '' });
   }
 
   onSave() {
@@ -88,7 +88,7 @@ export class SearchComponent extends LifecycleComponent {
 
   @OnChange('search') newState() {
     if (this.search)
-      this.searchForm.patchValue(this.search, {emitEvent: false});
+      this.searchForm.patchValue(this.search);
   }
 
 }

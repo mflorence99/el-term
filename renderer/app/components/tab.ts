@@ -47,7 +47,7 @@ export class TabComponent extends LifecycleComponent {
   }
 
   onClear(nm: string) {
-    this.tabForm.patchValue({ [nm]: '' }, { emitEvent: false });
+    this.tabForm.patchValue({ [nm]: '' });
   }
 
   onSubmit() {
@@ -60,7 +60,7 @@ export class TabComponent extends LifecycleComponent {
 
   @OnChange('tab') newState() {
     if (this.tab)
-      this.tabForm.patchValue(this.tab, {emitEvent: false});
+      this.tabForm.patchValue(this.tab);
   }
 
 }
