@@ -30,12 +30,12 @@ import { debounce } from 'ellib';
 
 export class RootPageComponent {
 
-  @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
-  @ViewChild(SplittableComponent) splittable: SplittableComponent;
+  @ViewChild(ContextMenuComponent, { static: true }) contextMenu: ContextMenuComponent;
+  @ViewChild(SplittableComponent, { static: true }) splittable: SplittableComponent;
 
-  @ViewChild('prefsDrawer') prefsDrawer: DrawerPanelComponent;
-  @ViewChild('searchDrawer') searchDrawer: DrawerPanelComponent;
-  @ViewChild('tabDrawer') tabDrawer: DrawerPanelComponent;
+  @ViewChild('prefsDrawer', { static: true }) prefsDrawer: DrawerPanelComponent;
+  @ViewChild('searchDrawer', { static: true }) searchDrawer: DrawerPanelComponent;
+  @ViewChild('tabDrawer', { static: true }) tabDrawer: DrawerPanelComponent;
 
   editPrefs = { } as LayoutPrefs;
   editPrefsID: string;

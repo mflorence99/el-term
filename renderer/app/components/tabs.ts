@@ -31,7 +31,7 @@ export class TabsComponent {
   @Input() tabs = { } as TabsStateModel;
   @Input() tabIndex: number;
 
-  @ViewChild(ContextMenuComponent) contextMenu: ContextMenuComponent;
+  @ViewChild(ContextMenuComponent, { static: true }) contextMenu: ContextMenuComponent;
 
   /** ctor */
   constructor(private root: RootPageComponent,

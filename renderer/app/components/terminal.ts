@@ -40,7 +40,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   @Output() focus = new EventEmitter<boolean>();
 
-  @ViewChild('xterm') xterm: ElementRef;
+  @ViewChild('xterm', { static: true }) xterm: ElementRef;
 
   /** ctor */
   constructor(private electron: ElectronService,
