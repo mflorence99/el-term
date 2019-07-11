@@ -1,5 +1,6 @@
 import * as fit from 'xterm/lib/addons/fit/fit';
 import * as search from 'xterm/lib/addons/search/search';
+import * as WebfontLoader from 'xterm-webfont';
 import * as webLinks from 'xterm/lib/addons/webLinks/webLinks';
 
 import { ELTermModule } from './app/module';
@@ -9,6 +10,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 Terminal.applyAddon(fit);
 Terminal.applyAddon(search);
+Terminal.applyAddon(WebfontLoader);
 Terminal.applyAddon(webLinks);
 
 platformBrowserDynamic().bootstrapModule(ELTermModule)

@@ -54,6 +54,7 @@
     "rxjs-compat": "6",
     "typeface-roboto-mono": "^0.0.54",
     "xterm": "3",
+    "xterm-webfont": "1",
     "zone.js": "^0.9.1"
   },
   "devDependencies": {

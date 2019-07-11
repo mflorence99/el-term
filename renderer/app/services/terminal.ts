@@ -100,11 +100,6 @@ export class TerminalService {
       }
     }
     console.groupEnd();
-    // force a resize because we changed from the default font
-    nextTick(() => {
-      const p = session.element.parentElement;
-      this.resize(sessionID, { width: p.clientWidth, height: p.clientHeight });
-    });
     return session.term;
   }
 
@@ -304,15 +299,20 @@ export class TerminalService {
       };
       session.term = new Terminal(options);
       // connect to DOM
-      session.term.open(element);
-      session.term.focus();
-      session.term.element.style.padding = `${config.terminalWindowPadding}px`;
-      // NOTE: see https://github.com/xtermjs/xterm.js/#importing
-      (<any>session.term).fit();
-      // TODO: temporarily disabled -- causes exception on clear
-      // (<any>session.term).webLinksInit();
-      session.element = element;
-      console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
+      // @see https://www.npmjs.com/package/xterm-webfont
+      (<any>session.term).loadWebfontAndOpen(element).then(() => {
+        session.element = element;
+        session.term.focus();
+        session.term.element.style.padding = `${config.terminalWindowPadding}px`;
+        // NOTE: see https://github.com/xtermjs/xterm.js/#importing
+        (<any>session.term).fit();
+        (<any>session.term).webLinksInit();
+        // force a resize because we changed from the default font
+        this.resizeByWidth(session, element.parentElement.clientWidth, element.parentElement.clientHeight);
+        // TODO: temporary
+        session.pty.write('echo Ready\n');
+        console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
+      });
     }
     // otherwise wire up previously disconnected nodes
     else {
