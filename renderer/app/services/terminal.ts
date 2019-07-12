@@ -98,8 +98,14 @@ export class TerminalService {
         session.pty.write(`${prefs.startup}\n`);
         console.log(`%cStart commands %c${prefs.startup.replace(/[\n\r]/g, ', ')}`, 'color: black', 'color: gray');
       }
+      else session.pty.write('\n');
     }
     console.groupEnd();
+    // force a resize because we changed from the default font
+    nextTick(() => {
+      const p = session.element.parentElement;
+      this.resize(sessionID, { width: p.clientWidth, height: p.clientHeight });
+    });
     return session.term;
   }
 
@@ -299,20 +305,14 @@ export class TerminalService {
       };
       session.term = new Terminal(options);
       // connect to DOM
-      // @see https://www.npmjs.com/package/xterm-webfont
-      (<any>session.term).loadWebfontAndOpen(element).then(() => {
-        session.element = element;
-        session.term.focus();
-        session.term.element.style.padding = `${config.terminalWindowPadding}px`;
-        // NOTE: see https://github.com/xtermjs/xterm.js/#importing
-        (<any>session.term).fit();
-        (<any>session.term).webLinksInit();
-        // force a resize because we changed from the default font
-        this.resizeByWidth(session, element.parentElement.clientWidth, element.parentElement.clientHeight);
-        // TODO: temporary
-        session.pty.write('echo Ready\n');
-        console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
-      });
+      session.term.open(element);
+      session.term.focus();
+      session.term.element.style.padding = `${config.terminalWindowPadding}px`;
+      // NOTE: see https://github.com/xtermjs/xterm.js/#importing
+      (<any>session.term).fit();
+      (<any>session.term).webLinksInit();
+      session.element = element;
+      console.log(`%cFONT %c${options.fontFamily} ${options.fontSize}px`, 'color: black', 'color: gray');
     }
     // otherwise wire up previously disconnected nodes
     else {
@@ -376,22 +376,22 @@ export class TerminalService {
   private resizeByWidth(session: Session,
                         width: number,
                         height: number): void {
-    if ((<any>session.term).renderer && (<any>session.term).viewport) {
-      const dims = (<any>session.term).renderer.dimensions;
-      const padding = config.terminalWindowPadding;
-      session.cols = Math.max(Math.round((width - (2 * padding)) / dims.actualCellWidth), 1);
-      session.rows = Math.max(Math.round((height - (2 * padding)) / dims.actualCellHeight), 1);
-      // finally ready to set rows, cols
-      session.term.resize(session.cols, session.rows);
-      session.pty.resize(session.cols, session.rows);
-      // log size nicely because we refer to it all the time
-      console.group(`%cresize('${session.id}') %c${session.cols}x${session.rows}`, `color: #0b8043`, `color: black`);
-        console.table({
-          width: {pixels: width, cell: dims.actualCellWidth, cells: session.cols},
-          height: {pixels: height, cell: dims.actualCellHeight, cells: session.rows}
-        });
-      console.groupEnd();
-    }
+    // TODO: Remove reliance on private API
+    const core = (<any>session.term)._core; 
+    const dims = { height: core.charMeasure.height, width: core.charMeasure.width };   
+    const padding = config.terminalWindowPadding;
+    session.cols = Math.max(Math.round((width - (2 * padding)) / dims.width), 1);
+    session.rows = Math.max(Math.round((height - (2 * padding)) / dims.height), 1);
+    // finally ready to set rows, cols
+    session.term.resize(session.cols, session.rows);
+    session.pty.resize(session.cols, session.rows);
+    // log size nicely because we refer to it all the time
+    console.group(`%cresize('${session.id}') %c${session.cols}x${session.rows}`, `color: #0b8043`, `color: black`);
+      console.table({
+        width: {pixels: width, cell: dims.width, cells: session.cols},
+        height: {pixels: height, cell: dims.height, cells: session.rows}
+      });
+    console.groupEnd();
   }
 
 }
