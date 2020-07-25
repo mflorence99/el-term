@@ -2,7 +2,6 @@ import { AfterViewInit } from '@angular/core';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { CloseSplit } from '../state/layout';
 import { Component } from '@angular/core';
-import { ElectronService } from 'ngx-electron';
 import { ElementRef } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { Input } from '@angular/core';
@@ -43,8 +42,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   @ViewChild('xterm', { static: true }) xterm: ElementRef;
 
   /** ctor */
-  constructor(private electron: ElectronService,
-              private pane: PaneComponent,
+  constructor(private pane: PaneComponent,
               private root: RootPageComponent,
               private splittable: SplittableComponent,
               private store: Store,
@@ -95,12 +93,8 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
 
   private keyHandler(event: KeyboardEvent): void {
     this.zone.run(() => {
-      if (event.ctrlKey && event.code === 'KeyR') {
-        const win = this.electron.remote.getCurrentWindow();
-        win.webContents.reload();
-      }
       // NOTE: as little tricky as we have to close on the parent
-      else if (event.ctrlKey && event.code === 'KeyP')
+      if (event.ctrlKey && event.code === 'KeyP')
         this.root.onExecute({item: { id: this.splittable.layout.id,
                                          ix: this.pane.index } }, 'prefs');
       else if (event.ctrlKey && event.code === 'KeyF')
